@@ -1,0 +1,11 @@
+{
+  "item.bcic2fuelbridge.oil_cell": "Crude Oil Cell",
+  "item.bcic2fuelbridge.oil_distilled_cell": "Distilled Oil Cell",
+  "item.bcic2fuelbridge.oil_heavy_cell": "Heavy Oil Cell",
+  "item.bcic2fuelbridge.oil_dense_cell": "Dense Oil Cell",
+  "item.bcic2fuelbridge.fuel_gaseous_cell": "Gaseous Fuel Cell",
+  "item.bcic2fuelbridge.fuel_light_cell": "Light Fuel Cell",
+  "item.bcic2fuelbridge.fuel_dense_cell": "Dense Fuel Cell",
+  "item.bcic2fuelbridge.fuel_mixed_light_cell": "Mixed Light Fuel Cell",
+  "item.bcic2fuelbridge.fuel_mixed_heavy_cell": "Mixed Heavy Fuel Cell"
+}

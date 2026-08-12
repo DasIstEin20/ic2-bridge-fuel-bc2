@@ -1,0 +1,5 @@
+{
+  "loader": "bcic2fuelbridge:fuel_cell",
+  "base": "ic2:item/creosote_cell",
+  "fluid": "buildcraftenergy:blocks/fluids/fuel_mixed_light/cool_still"
+}

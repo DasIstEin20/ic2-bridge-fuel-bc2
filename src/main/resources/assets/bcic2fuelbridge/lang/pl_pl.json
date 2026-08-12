@@ -1,0 +1,11 @@
+{
+  "item.bcic2fuelbridge.oil_cell": "Komórka ropy naftowej",
+  "item.bcic2fuelbridge.oil_distilled_cell": "Komórka destylowanej ropy",
+  "item.bcic2fuelbridge.oil_heavy_cell": "Komórka ciężkiej ropy",
+  "item.bcic2fuelbridge.oil_dense_cell": "Komórka gęstej ropy",
+  "item.bcic2fuelbridge.fuel_gaseous_cell": "Komórka paliwa gazowego",
+  "item.bcic2fuelbridge.fuel_light_cell": "Komórka lekkiego paliwa",
+  "item.bcic2fuelbridge.fuel_dense_cell": "Komórka gęstego paliwa",
+  "item.bcic2fuelbridge.fuel_mixed_light_cell": "Komórka lekkiej mieszanki paliwowej",
+  "item.bcic2fuelbridge.fuel_mixed_heavy_cell": "Komórka ciężkiej mieszanki paliwowej"
+}
