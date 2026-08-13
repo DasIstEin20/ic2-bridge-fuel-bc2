@@ -79,6 +79,24 @@ fluid_id;energy_EU_per_mB;burn_time_ticks
 
 Exact rules take priority over automatic discovery. Restart the server after changing either fuel direction because existing IC2/BuildCraft fuel registry entries cannot safely be replaced while a world is running.
 
+## Screenshots
+
+### Configuration screen
+
+| Energy | BuildCraft → IC2 |
+| --- | --- |
+| [![Energy settings](docs/screenshots/01-energy.png)](docs/screenshots/01-energy.png) | [![BuildCraft to IC2 settings](docs/screenshots/02-bc-to-ic2.png)](docs/screenshots/02-bc-to-ic2.png) |
+| Fuel profiles | IC2 → BuildCraft |
+| [![Fuel profile settings](docs/screenshots/03-fuel-profiles.png)](docs/screenshots/03-fuel-profiles.png) | [![IC2 to BuildCraft settings](docs/screenshots/04-ic2-to-bc.png)](docs/screenshots/04-ic2-to-bc.png) |
+| Balance | Overrides |
+| [![Balance settings](docs/screenshots/05-balance.png)](docs/screenshots/05-balance.png) | [![Fuel override settings](docs/screenshots/06-overrides.png)](docs/screenshots/06-overrides.png) |
+| Discovery | Compatibility |
+| [![Discovery settings](docs/screenshots/07-discovery.png)](docs/screenshots/07-discovery.png) | [![Compatibility information](docs/screenshots/08-compatibility.png)](docs/screenshots/08-compatibility.png) |
+
+### In-game fuel bridge
+
+[![Dense Oil registered in the IC2 Semifluid Generator](docs/screenshots/09-semifluid-generator.png)](docs/screenshots/09-semifluid-generator.png)
+
 ## Requirements
 
 - Minecraft 1.20.1
