@@ -9,6 +9,7 @@ import java.util.Map;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.Button;
 import net.minecraft.client.gui.components.EditBox;
+import net.minecraft.client.gui.components.Tooltip;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.network.chat.Component;
 
@@ -20,20 +21,21 @@ import net.minecraft.network.chat.Component;
  */
 public final class BridgeConfigScreen extends Screen
 {
-    private static final int ROW_HEIGHT = 24;
-    private static final int CONTENT_LEFT = 12;
-    private static final int CONTENT_RIGHT = 12;
+    private static final int PANEL_MAX_WIDTH = 780;
+    private static final int PANEL_TOP = 58;
+    private static final int PANEL_PADDING = 24;
+    private static final int INPUT_COLUMN_WIDTH = 390;
 
     private final Screen parent;
     private final Draft draft;
     private final Map<String, EditBox> inputs = new LinkedHashMap<>();
-    private Page page = Page.BALANCE;
+    private Page page = Page.ENERGY;
     private String status = "";
     private boolean canSave;
 
     public BridgeConfigScreen(Screen parent)
     {
-        super(Component.literal("BuildCraft x IC2 Fuel Bridge"));
+        super(Component.translatable("screen.bcic2fuelbridge.title"));
         this.parent = parent;
         this.draft = BridgeConfig.SPEC.isLoaded() ? Draft.fromLoadedConfig() : null;
     }
@@ -46,7 +48,7 @@ public final class BridgeConfigScreen extends Screen
 
         if (this.draft == null)
         {
-            this.addRenderableWidget(Button.builder(Component.literal("Done"), button -> this.onClose())
+            this.addRenderableWidget(Button.builder(Component.translatable("screen.bcic2fuelbridge.done"), button -> this.onClose())
                     .bounds(this.width / 2 - 50, this.height - 28, 100, 20)
                     .build());
             return;
@@ -57,32 +59,35 @@ public final class BridgeConfigScreen extends Screen
 
         switch (this.page)
         {
+            case ENERGY -> this.addEnergyWidgets();
+            case BC_TO_IC2 -> this.addBuildCraftToIc2Widgets();
             case BALANCE -> this.addBalanceWidgets();
             case PROFILES -> this.addProfileWidgets();
-            case FALLBACK -> this.addFallbackWidgets();
+            case IC2_TO_BC -> this.addIc2ToBuildCraftWidgets();
             case DISCOVERY -> this.addDiscoveryWidgets();
             case OVERRIDES -> this.addOverrideWidgets();
+            case COMPATIBILITY -> { }
         }
 
         int buttonY = this.height - 28;
-        Button save = this.addRenderableWidget(Button.builder(Component.literal("Save"), ignored -> this.save())
+        Button save = this.addRenderableWidget(Button.builder(Component.translatable("screen.bcic2fuelbridge.save"), ignored -> this.save())
                 .bounds(this.width / 2 - 104, buttonY, 98, 20)
                 .build());
         save.active = this.canSave;
-        this.addRenderableWidget(Button.builder(Component.literal("Done"), ignored -> this.closeAfterSaving())
+        this.addRenderableWidget(Button.builder(Component.translatable("screen.bcic2fuelbridge.done"), ignored -> this.closeAfterSaving())
                 .bounds(this.width / 2 + 6, buttonY, 98, 20)
                 .build());
     }
 
     private void addNavigation()
     {
-        int tabWidth = Math.min(88, (this.width - 20) / Page.values().length);
+        int tabWidth = Math.min(96, (this.width - 32) / Page.values().length);
         int totalWidth = tabWidth * Page.values().length;
         int startX = (this.width - totalWidth) / 2;
         for (Page candidate : Page.values())
         {
             Button button = this.addRenderableWidget(Button.builder(
-                            Component.literal(candidate.label),
+                            Component.translatable(candidate.translationKey),
                             ignored -> this.switchPage(candidate)
                     )
                     .bounds(startX + candidate.ordinal() * tabWidth, 28, tabWidth - 2, 20)
@@ -93,20 +98,56 @@ public final class BridgeConfigScreen extends Screen
 
     private void addBalanceWidgets()
     {
-        this.addToggle("Use automatic BuildCraft CE profiles", this.draft.useBuiltInProfiles,
-                value -> this.draft.useBuiltInProfiles = value, 68);
-        this.addInput("euPerMj", "EU per BuildCraft MJ", this.draft.euPerMj, 96);
-        this.addInput("energyMultiplier", "Global energy multiplier", this.draft.energyMultiplier, 120);
-        this.addInput("ceCycle", "CE burn cycle (mB)", this.draft.ceCycleAmountMb, 144);
+        this.addInput("energyMultiplier", "screen.bcic2fuelbridge.field.fuel_multiplier", this.draft.energyMultiplier, 94);
+        this.addInput("referenceVolume", "screen.bcic2fuelbridge.field.reference_volume", this.draft.referenceVolumeMb, 122);
+        this.addInput("oilEnergy", "screen.bcic2fuelbridge.field.oil_energy", this.draft.oilEnergyEuPerReferenceUnit, 150);
+        this.addInput("oilCycle", "screen.bcic2fuelbridge.field.oil_cycle", this.draft.oilCycleAmountMb, 178);
+        this.addInput("fuelEnergy", "screen.bcic2fuelbridge.field.fuel_energy", this.draft.fuelEnergyEuPerReferenceUnit, 206);
+        this.addInput("fuelCycle", "screen.bcic2fuelbridge.field.fuel_cycle", this.draft.fuelCycleAmountMb, 234);
+    }
+
+    private void addEnergyWidgets()
+    {
+        this.addToggle("screen.bcic2fuelbridge.toggle.energy", this.draft.energyBridgeEnabled,
+                value -> this.draft.energyBridgeEnabled = value, 94);
+        this.addEnergyModeButton(122);
+        EditBox ratio = this.addInput("euPerMj", "screen.bcic2fuelbridge.field.eu_per_mj", this.draft.euPerMj, 150);
+        ratio.setEditable(this.canSave && this.draft.energyConversionMode == EnergyConversionMode.MANUAL);
+        ratio.active = this.canSave && this.draft.energyConversionMode == EnergyConversionMode.MANUAL;
+        ratio.setTooltip(Tooltip.create(Component.translatable("screen.bcic2fuelbridge.tooltip.conversion_mode", EnergyConversionService.AUTO_EU_PER_MJ)));
+        this.addTransferLimitModeButton(178);
+        EditBox limit = this.addInput("transferLimit", "screen.bcic2fuelbridge.field.transfer_limit", this.draft.transferLimitEuPerTick, 206);
+        limit.setEditable(this.canSave && this.draft.transferLimitMode == EnergyTransferLimitMode.MANUAL);
+        limit.active = this.canSave && this.draft.transferLimitMode == EnergyTransferLimitMode.MANUAL;
+        limit.setTooltip(Tooltip.create(Component.translatable("screen.bcic2fuelbridge.tooltip.transfer_limit")));
+    }
+
+    private void addBuildCraftToIc2Widgets()
+    {
+        this.addToggle("screen.bcic2fuelbridge.toggle.bc_to_ic2", this.draft.bcToIc2Enabled,
+                value -> this.draft.bcToIc2Enabled = value, 94);
+        this.addToggle("screen.bcic2fuelbridge.toggle.ce_profiles", this.draft.useBuiltInProfiles,
+                value -> this.draft.useBuiltInProfiles = value, 122);
+        this.addInput("ceCycle", "screen.bcic2fuelbridge.field.ce_cycle", this.draft.ceCycleAmountMb, 150);
+    }
+
+    private void addIc2ToBuildCraftWidgets()
+    {
+        this.addToggle("screen.bcic2fuelbridge.toggle.ic2_to_bc", this.draft.ic2ToBcEnabled,
+                value -> this.draft.ic2ToBcEnabled = value, 94);
+        this.addToggle("screen.bcic2fuelbridge.toggle.ic2_discovery", this.draft.ic2ToBcAutoDiscovery,
+                value -> this.draft.ic2ToBcAutoDiscovery = value, 122);
+        this.addInput("ic2ToBcTokens", "screen.bcic2fuelbridge.field.namespace_tokens", this.draft.ic2ToBcNamespaceTokens, 150);
+        this.addInput("ic2ToBcBurnTicks", "screen.bcic2fuelbridge.field.burn_time", this.draft.ic2ToBcBurnTimeTicks, 178);
     }
 
     private void addProfileWidgets()
     {
-        int activeX = Math.max(108, this.width / 2 - 84);
-        int modeX = activeX + 44;
-        int manualX = modeX + 66;
-        int manualWidth = Math.max(48, this.width - manualX - CONTENT_RIGHT);
-        int y = 72;
+        int activeX = this.panelLeft() + 278;
+        int modeX = activeX + 58;
+        int manualX = modeX + 84;
+        int manualWidth = this.panelRight() - manualX - PANEL_PADDING;
+        int y = 104;
 
         for (BuildCraftCeFuelProfiles.FuelDefinition fuel : BuildCraftCeFuelProfiles.definitions())
         {
@@ -117,104 +158,130 @@ public final class BridgeConfigScreen extends Screen
             }
 
             String key = "profile." + fuel.id() + ".manual";
-            Button enabled = this.addRenderableWidget(Button.builder(Component.literal(profile.enabled ? "ON" : "OFF"), ignored -> {
+            Button enabled = this.addRenderableWidget(Button.builder(Component.translatable(profile.enabled ? "screen.bcic2fuelbridge.on" : "screen.bcic2fuelbridge.off"), ignored -> {
                         this.storeCurrentPageValues();
                         profile.enabled = !profile.enabled;
                         this.init();
                     })
-                    .bounds(activeX, y, 42, 16)
+                    .bounds(activeX, y, 56, 18)
                     .build());
             enabled.active = this.canSave;
 
-            Button mode = this.addRenderableWidget(Button.builder(Component.literal(profile.mode.name()), ignored -> {
+            Button mode = this.addRenderableWidget(Button.builder(this.enumLabel(profile.mode), ignored -> {
                         this.storeCurrentPageValues();
                         profile.mode = profile.mode == BuildCraftFuelMode.AUTO
                                 ? BuildCraftFuelMode.MANUAL
                                 : BuildCraftFuelMode.AUTO;
                         this.init();
                     })
-                    .bounds(modeX, y, 64, 16)
+                    .bounds(modeX, y, 82, 18)
                     .build());
             mode.active = this.canSave;
 
-            EditBox manual = new EditBox(this.font, manualX, y, manualWidth, 16,
-                    Component.literal("Manual EU/MJ"));
+            EditBox manual = new EditBox(this.font, manualX, y, manualWidth, 18,
+                    Component.translatable("screen.bcic2fuelbridge.profile.manual"));
             manual.setMaxLength(32);
             manual.setValue(profile.manualEuPerMj);
             manual.setEditable(this.canSave && profile.mode == BuildCraftFuelMode.MANUAL);
             manual.active = this.canSave && profile.mode == BuildCraftFuelMode.MANUAL;
             this.addRenderableWidget(manual);
             this.inputs.put(key, manual);
-            y += 18;
+            y += 22;
         }
-    }
-
-    private void addFallbackWidgets()
-    {
-        this.addInput("referenceVolume", "Reference unit volume (mB)", this.draft.referenceVolumeMb, 72);
-        this.addInput("oilEnergy", "Generic oil EU / unit", this.draft.oilEnergyEuPerReferenceUnit, 96);
-        this.addInput("oilCycle", "Generic oil cycle (mB)", this.draft.oilCycleAmountMb, 120);
-        this.addInput("fuelEnergy", "Generic fuel EU / unit", this.draft.fuelEnergyEuPerReferenceUnit, 144);
-        this.addInput("fuelCycle", "Generic fuel cycle (mB)", this.draft.fuelCycleAmountMb, 168);
     }
 
     private void addDiscoveryWidgets()
     {
-        this.addToggle("Automatic fluid discovery", this.draft.autoDiscovery,
-                value -> this.draft.autoDiscovery = value, 72);
-        this.addInput("namespaceTokens", "Namespace tokens (comma-separated)", this.draft.namespaceTokens, 100);
-        this.addToggle("Class package fallback", this.draft.classPackageFallback,
-                value -> this.draft.classPackageFallback = value, 128);
-        this.addToggle("Log skipped oil/fuel fluids", this.draft.logSkippedOilFuelIds,
-                value -> this.draft.logSkippedOilFuelIds = value, 156);
+        this.addToggle("screen.bcic2fuelbridge.toggle.auto_discovery", this.draft.autoDiscovery,
+                value -> this.draft.autoDiscovery = value, 94);
+        this.addInput("namespaceTokens", "screen.bcic2fuelbridge.field.namespace_tokens", this.draft.namespaceTokens, 122);
+        this.addToggle("screen.bcic2fuelbridge.toggle.class_fallback", this.draft.classPackageFallback,
+                value -> this.draft.classPackageFallback = value, 150);
+        this.addToggle("screen.bcic2fuelbridge.toggle.log_skipped", this.draft.logSkippedOilFuelIds,
+                value -> this.draft.logSkippedOilFuelIds = value, 178);
     }
 
     private void addOverrideWidgets()
     {
-        this.addInput("customRules", "Rules (separate with |)", this.draft.customRules, 82);
+        this.addInput("customRules", "screen.bcic2fuelbridge.field.bc_to_ic2_rules", this.draft.customRules, 116);
+        this.addInput("ic2ToBcRules", "screen.bcic2fuelbridge.field.ic2_to_bc_rules", this.draft.ic2ToBcCustomRules, 168);
     }
 
-    private void addToggle(String label, boolean value, BooleanConsumer onChange, int y)
+    private void addEnergyModeButton(int y)
     {
-        Button toggle = this.addRenderableWidget(Button.builder(toggleLabel(label, value), button -> {
-                    boolean newValue = !valueOf(button);
+        Button button = this.addRenderableWidget(Button.builder(
+                        Component.translatable("screen.bcic2fuelbridge.button.conversion_mode", this.enumLabel(this.draft.energyConversionMode)),
+                        ignored -> {
+                            this.storeCurrentPageValues();
+                            this.draft.energyConversionMode = this.draft.energyConversionMode == EnergyConversionMode.AUTO
+                                    ? EnergyConversionMode.MANUAL
+                                    : EnergyConversionMode.AUTO;
+                            this.init();
+                        }
+                )
+                .bounds(this.controlX(), y, this.controlWidth(), 20)
+                .build());
+        button.active = this.canSave;
+        button.setTooltip(Tooltip.create(Component.translatable("screen.bcic2fuelbridge.tooltip.conversion_mode", EnergyConversionService.AUTO_EU_PER_MJ)));
+    }
+
+    private void addTransferLimitModeButton(int y)
+    {
+        Button button = this.addRenderableWidget(Button.builder(
+                        Component.translatable("screen.bcic2fuelbridge.button.transfer_limit", this.enumLabel(this.draft.transferLimitMode)),
+                        ignored -> {
+                            this.storeCurrentPageValues();
+                            this.draft.transferLimitMode = this.draft.transferLimitMode == EnergyTransferLimitMode.AUTO
+                                    ? EnergyTransferLimitMode.MANUAL
+                                    : EnergyTransferLimitMode.AUTO;
+                            this.init();
+                        }
+                )
+                .bounds(this.controlX(), y, this.controlWidth(), 20)
+                .build());
+        button.active = this.canSave;
+        button.setTooltip(Tooltip.create(Component.translatable("screen.bcic2fuelbridge.tooltip.transfer_limit")));
+    }
+
+    private void addToggle(String translationKey, boolean value, BooleanConsumer onChange, int y)
+    {
+        Button toggle = this.addRenderableWidget(Button.builder(toggleLabel(translationKey, value), button -> {
+                    boolean newValue = !button.getMessage().getString().equals(toggleLabel(translationKey, true).getString());
                     onChange.accept(newValue);
-                    button.setMessage(toggleLabel(label, newValue));
+                    button.setMessage(toggleLabel(translationKey, newValue));
                 })
-                .bounds(CONTENT_LEFT, y, this.width - CONTENT_LEFT - CONTENT_RIGHT, 20)
+                .bounds(this.controlX(), y, this.controlWidth(), 20)
                 .build());
         toggle.active = this.canSave;
     }
 
-    private static boolean valueOf(Button button)
+    private static Component toggleLabel(String translationKey, boolean value)
     {
-        return button.getMessage().getString().endsWith(": ON");
+        return Component.translatable("screen.bcic2fuelbridge.toggle", Component.translatable(translationKey),
+                Component.translatable(value ? "screen.bcic2fuelbridge.on" : "screen.bcic2fuelbridge.off"));
     }
 
-    private static Component toggleLabel(String label, boolean value)
+    private EditBox addInput(String key, String labelKey, Object value, int y)
     {
-        return Component.literal(label + ": " + (value ? "ON" : "OFF"));
-    }
-
-    private void addInput(String key, String label, Object value, int y)
-    {
-        EditBox input = new EditBox(this.font, this.inputX(), y, this.inputWidth(), 20, Component.literal(label));
+        EditBox input = new EditBox(this.font, this.inputX(), y, this.inputWidth(), 20, Component.translatable(labelKey));
         input.setMaxLength(2048);
         input.setValue(String.valueOf(value));
         input.setEditable(this.canSave);
         input.active = this.canSave;
         this.addRenderableWidget(input);
         this.inputs.put(key, input);
+        input.setTooltip(Tooltip.create(Component.translatable(labelKey)));
+        return input;
     }
 
     private int inputX()
     {
-        return this.width / 2 + 8;
+        return this.panelRight() - PANEL_PADDING - INPUT_COLUMN_WIDTH;
     }
 
     private int inputWidth()
     {
-        return this.width - this.inputX() - CONTENT_RIGHT;
+        return INPUT_COLUMN_WIDTH;
     }
 
     private void switchPage(Page nextPage)
@@ -228,10 +295,18 @@ public final class BridgeConfigScreen extends Screen
     {
         switch (this.page)
         {
-            case BALANCE -> {
+            case ENERGY -> {
                 this.draft.euPerMj = this.value("euPerMj");
+                this.draft.transferLimitEuPerTick = this.value("transferLimit");
+            }
+            case BC_TO_IC2 -> this.draft.ceCycleAmountMb = this.value("ceCycle");
+            case BALANCE -> {
                 this.draft.energyMultiplier = this.value("energyMultiplier");
-                this.draft.ceCycleAmountMb = this.value("ceCycle");
+                this.draft.referenceVolumeMb = this.value("referenceVolume");
+                this.draft.oilEnergyEuPerReferenceUnit = this.value("oilEnergy");
+                this.draft.oilCycleAmountMb = this.value("oilCycle");
+                this.draft.fuelEnergyEuPerReferenceUnit = this.value("fuelEnergy");
+                this.draft.fuelCycleAmountMb = this.value("fuelCycle");
             }
             case PROFILES -> {
                 for (BuildCraftCeFuelProfiles.FuelDefinition fuel : BuildCraftCeFuelProfiles.definitions())
@@ -243,15 +318,16 @@ public final class BridgeConfigScreen extends Screen
                     }
                 }
             }
-            case FALLBACK -> {
-                this.draft.referenceVolumeMb = this.value("referenceVolume");
-                this.draft.oilEnergyEuPerReferenceUnit = this.value("oilEnergy");
-                this.draft.oilCycleAmountMb = this.value("oilCycle");
-                this.draft.fuelEnergyEuPerReferenceUnit = this.value("fuelEnergy");
-                this.draft.fuelCycleAmountMb = this.value("fuelCycle");
+            case IC2_TO_BC -> {
+                this.draft.ic2ToBcNamespaceTokens = this.value("ic2ToBcTokens");
+                this.draft.ic2ToBcBurnTimeTicks = this.value("ic2ToBcBurnTicks");
             }
             case DISCOVERY -> this.draft.namespaceTokens = this.value("namespaceTokens");
-            case OVERRIDES -> this.draft.customRules = this.value("customRules");
+            case OVERRIDES -> {
+                this.draft.customRules = this.value("customRules");
+                this.draft.ic2ToBcCustomRules = this.value("ic2ToBcRules");
+            }
+            case COMPATIBILITY -> { }
         }
     }
 
@@ -266,7 +342,7 @@ public final class BridgeConfigScreen extends Screen
         this.storeCurrentPageValues();
         if (this.applyDraft())
         {
-            this.status = "Saved. Restart the world/server to apply fuel rules.";
+            this.status = Component.translatable("screen.bcic2fuelbridge.saved").getString();
         }
     }
 
@@ -283,7 +359,7 @@ public final class BridgeConfigScreen extends Screen
     {
         if (!this.canSave)
         {
-            this.status = "Server config is read-only here. Edit the serverconfig file as an administrator.";
+            this.status = Component.translatable("screen.bcic2fuelbridge.readonly_status").getString();
             return false;
         }
 
@@ -296,7 +372,9 @@ public final class BridgeConfigScreen extends Screen
             double fuelEnergy = this.parseDouble("Generic fuel energy", this.draft.fuelEnergyEuPerReferenceUnit, 0.000001D, 1_000_000_000_000.0D);
             int fuelCycle = this.parseInt("Generic fuel cycle", this.draft.fuelCycleAmountMb, 1, 10_000);
             double euPerMj = this.parseDouble("EU per BuildCraft MJ", this.draft.euPerMj, 0.000001D, 1_000_000.0D);
+            double transferLimit = this.parseDouble("Transfer limit", this.draft.transferLimitEuPerTick, 0.000001D, 1_000_000_000.0D);
             int ceCycle = this.parseInt("CE burn cycle", this.draft.ceCycleAmountMb, 1, 10_000);
+            int ic2ToBcBurnTicks = this.parseInt("IC2 → BuildCraft burn time", this.draft.ic2ToBcBurnTimeTicks, 1, 2_000_000);
 
             Map<String, Double> profileConversions = new LinkedHashMap<>();
             for (BuildCraftCeFuelProfiles.FuelDefinition fuel : BuildCraftCeFuelProfiles.definitions())
@@ -314,6 +392,16 @@ public final class BridgeConfigScreen extends Screen
             BridgeConfig.NAMESPACE_TOKENS.set(this.splitList(this.draft.namespaceTokens, ","));
             BridgeConfig.CLASS_PACKAGE_FALLBACK.set(this.draft.classPackageFallback);
             BridgeConfig.LOG_SKIPPED_OIL_FUEL_IDS.set(this.draft.logSkippedOilFuelIds);
+            BridgeConfig.ENERGY_BRIDGE_ENABLED.set(this.draft.energyBridgeEnabled);
+            BridgeConfig.ENERGY_CONVERSION_MODE.set(this.draft.energyConversionMode);
+            BridgeConfig.EU_PER_BUILDCRAFT_MJ.set(euPerMj);
+            BridgeConfig.ENERGY_TRANSFER_LIMIT_MODE.set(this.draft.transferLimitMode);
+            BridgeConfig.ENERGY_TRANSFER_LIMIT_EU_PER_TICK.set(transferLimit);
+            BridgeConfig.FUEL_BRIDGE_BC_TO_IC2_ENABLED.set(this.draft.bcToIc2Enabled);
+            BridgeConfig.FUEL_BRIDGE_IC2_TO_BC_ENABLED.set(this.draft.ic2ToBcEnabled);
+            BridgeConfig.IC2_TO_BC_AUTO_DISCOVERY.set(this.draft.ic2ToBcAutoDiscovery);
+            BridgeConfig.IC2_TO_BC_NAMESPACE_TOKENS.set(this.splitList(this.draft.ic2ToBcNamespaceTokens, ","));
+            BridgeConfig.IC2_TO_BC_BURN_TIME_TICKS.set(ic2ToBcBurnTicks);
             BridgeConfig.REFERENCE_UNIT_VOLUME_MB.set(referenceVolume);
             BridgeConfig.ENERGY_MULTIPLIER.set(multiplier);
             BridgeConfig.OIL_ENERGY_EU_PER_REFERENCE_UNIT.set(oilEnergy);
@@ -321,9 +409,9 @@ public final class BridgeConfigScreen extends Screen
             BridgeConfig.FUEL_ENERGY_EU_PER_REFERENCE_UNIT.set(fuelEnergy);
             BridgeConfig.FUEL_CYCLE_AMOUNT_MB.set(fuelCycle);
             BridgeConfig.USE_BUILDCRAFT_CE_8_PROFILES.set(this.draft.useBuiltInProfiles);
-            BridgeConfig.EU_PER_BUILDCRAFT_MJ.set(euPerMj);
             BridgeConfig.BUILDCRAFT_CE_CYCLE_AMOUNT_MB.set(ceCycle);
             BridgeConfig.CUSTOM_FUEL_RULES.set(this.splitList(this.draft.customRules, "\\|"));
+            BridgeConfig.IC2_TO_BC_CUSTOM_FUEL_RULES.set(this.splitList(this.draft.ic2ToBcCustomRules, "\\|"));
             for (BuildCraftCeFuelProfiles.FuelDefinition fuel : BuildCraftCeFuelProfiles.definitions())
             {
                 Draft.FuelProfileDraft profile = this.draft.fuelProfiles.get(fuel.id());
@@ -395,11 +483,14 @@ public final class BridgeConfigScreen extends Screen
     public void render(GuiGraphics graphics, int mouseX, int mouseY, float partialTick)
     {
         this.renderBackground(graphics);
+        graphics.fill(this.panelLeft(), PANEL_TOP, this.panelRight(), this.panelBottom(), 0xD0101822);
+        graphics.fill(this.panelLeft(), PANEL_TOP, this.panelRight(), PANEL_TOP + 1, 0xFF66788B);
+        graphics.fill(this.panelLeft(), this.panelBottom() - 1, this.panelRight(), this.panelBottom(), 0xFF263544);
         graphics.drawCenteredString(this.font, this.title, this.width / 2, 10, 0xFFFFFF);
 
         if (this.draft == null)
         {
-            graphics.drawCenteredString(this.font, "The server config is loaded only after opening a world/server.",
+            graphics.drawCenteredString(this.font, Component.translatable("screen.bcic2fuelbridge.not_loaded"),
                     this.width / 2, this.height / 2 - 8, 0xFF8080);
             super.render(graphics, mouseX, mouseY, partialTick);
             return;
@@ -411,8 +502,8 @@ public final class BridgeConfigScreen extends Screen
             graphics.drawCenteredString(
                     this.font,
                     this.canSave
-                            ? "Changes are saved to this integrated server. Restart required."
-                            : "Server-synced values are read-only. Configure a dedicated server in serverconfig.",
+                            ? Component.translatable("screen.bcic2fuelbridge.integrated_note")
+                            : Component.translatable("screen.bcic2fuelbridge.readonly_note"),
                     this.width / 2,
                     this.height - 52,
                     this.canSave ? 0xFFFF55 : 0xFFAA55
@@ -429,55 +520,124 @@ public final class BridgeConfigScreen extends Screen
     {
         switch (this.page)
         {
+            case ENERGY -> {
+                this.centeredNote(graphics, "screen.bcic2fuelbridge.note.energy", 70);
+                this.label(graphics, "screen.bcic2fuelbridge.field.eu_per_mj", 156);
+                this.label(graphics, "screen.bcic2fuelbridge.field.transfer_limit", 212);
+            }
+            case BC_TO_IC2 -> {
+                this.centeredNote(graphics, "screen.bcic2fuelbridge.note.bc_to_ic2", 70);
+                this.centeredNote(graphics, "screen.bcic2fuelbridge.note.profiles", 184);
+            }
             case BALANCE -> {
-                this.label(graphics, "AUTO profiles use BuildCraft CE's extracted MJ/mB values.", 52);
-                this.label(graphics, "EU per BuildCraft MJ", 102);
-                this.label(graphics, "Global energy multiplier", 126);
-                this.label(graphics, "CE burn cycle (mB)", 150);
+                this.centeredNote(graphics, "screen.bcic2fuelbridge.note.balance", 70);
+                this.label(graphics, "screen.bcic2fuelbridge.field.fuel_multiplier", 100);
+                this.label(graphics, "screen.bcic2fuelbridge.field.reference_volume", 128);
+                this.label(graphics, "screen.bcic2fuelbridge.field.oil_energy", 156);
+                this.label(graphics, "screen.bcic2fuelbridge.field.oil_cycle", 184);
+                this.label(graphics, "screen.bcic2fuelbridge.field.fuel_energy", 212);
+                this.label(graphics, "screen.bcic2fuelbridge.field.fuel_cycle", 240);
             }
             case PROFILES -> {
                 String message = this.status.isEmpty()
-                        ? "OFF excludes this fuel. MANUAL enables its own EU/MJ conversion."
+                        ? Component.translatable("screen.bcic2fuelbridge.note.profile").getString()
                         : this.status;
-                graphics.drawCenteredString(this.font, message, this.width / 2, 51,
+                graphics.drawCenteredString(this.font, message, this.width / 2, 70,
                         this.status.isEmpty() ? 0xE0E0E0 : 0xFF8080);
-                int activeX = Math.max(108, this.width / 2 - 84);
-                int modeX = activeX + 44;
-                int manualX = modeX + 66;
-                this.label(graphics, "Fuel (MJ/mB)", 61);
-                graphics.drawString(this.font, "Active", activeX, 61, 0xE0E0E0);
-                graphics.drawString(this.font, "Mode", modeX, 61, 0xE0E0E0);
-                graphics.drawString(this.font, "Manual EU/MJ", manualX, 61, 0xE0E0E0);
-                int y = 76;
+                int activeX = this.panelLeft() + 278;
+                int modeX = activeX + 58;
+                int manualX = modeX + 84;
+                this.label(graphics, "screen.bcic2fuelbridge.profile.fuel", 91);
+                graphics.drawString(this.font, Component.translatable("screen.bcic2fuelbridge.profile.active"), activeX, 91, 0xE0E0E0);
+                graphics.drawString(this.font, Component.translatable("screen.bcic2fuelbridge.profile.mode"), modeX, 91, 0xE0E0E0);
+                graphics.drawString(this.font, Component.translatable("screen.bcic2fuelbridge.profile.manual"), manualX, 91, 0xE0E0E0);
+                int y = 109;
                 for (BuildCraftCeFuelProfiles.FuelDefinition fuel : BuildCraftCeFuelProfiles.definitions())
                 {
-                    this.label(graphics, fuel.displayName() + " (" + decimal(fuel.megaJoulesPerMb()) + ")", y);
-                    y += 18;
+                    graphics.drawString(this.font, Component.translatable("screen.bcic2fuelbridge.fuel." + fuel.configKey(), decimal(fuel.megaJoulesPerMb())), this.labelX(), y, 0xE0E0E0);
+                    y += 22;
                 }
             }
-            case FALLBACK -> {
-                this.label(graphics, "Fallback values apply to non-CE oil/fuel fluids found by discovery.", 52);
-                this.label(graphics, "Reference unit volume (mB)", 78);
-                this.label(graphics, "Generic oil EU / unit", 102);
-                this.label(graphics, "Generic oil cycle (mB)", 126);
-                this.label(graphics, "Generic fuel EU / unit", 150);
-                this.label(graphics, "Generic fuel cycle (mB)", 174);
+            case IC2_TO_BC -> {
+                this.centeredNote(graphics, "screen.bcic2fuelbridge.note.ic2_to_bc", 70);
+                this.label(graphics, "screen.bcic2fuelbridge.field.namespace_tokens", 156);
+                this.label(graphics, "screen.bcic2fuelbridge.field.burn_time", 184);
             }
             case DISCOVERY -> {
-                this.label(graphics, "Only source fluids are registered; flowing variants are skipped.", 52);
-                this.label(graphics, "Namespace tokens (comma-separated)", 106);
+                this.centeredNote(graphics, "screen.bcic2fuelbridge.note.discovery", 70);
+                this.label(graphics, "screen.bcic2fuelbridge.field.namespace_tokens", 128);
             }
             case OVERRIDES -> {
-                this.label(graphics, "Syntax: fluid_id;energy_EU;volume_mB;cycle_mB", 52);
-                this.label(graphics, "Separate multiple rules with a | character.", 66);
-                this.label(graphics, "Rules (separate with |)", 88);
+                this.centeredNote(graphics, "screen.bcic2fuelbridge.note.bc_rule", 70);
+                this.label(graphics, "screen.bcic2fuelbridge.field.bc_to_ic2_rules", 106);
+                this.centeredNote(graphics, "screen.bcic2fuelbridge.note.ic2_rule", 142);
+                this.label(graphics, "screen.bcic2fuelbridge.field.ic2_to_bc_rules", 158);
+            }
+            case COMPATIBILITY -> {
+                this.centeredNote(graphics, "screen.bcic2fuelbridge.note.compatibility_1", 102);
+                this.centeredNote(graphics, "screen.bcic2fuelbridge.note.compatibility_2", 130);
+                this.centeredNote(graphics, "screen.bcic2fuelbridge.note.compatibility_3", 158);
             }
         }
     }
 
-    private void label(GuiGraphics graphics, String text, int y)
+    private void label(GuiGraphics graphics, String translationKey, int y)
     {
-        graphics.drawString(this.font, text, CONTENT_LEFT, y, 0xE0E0E0);
+        graphics.drawString(this.font, Component.translatable(translationKey), this.labelX(), y, 0xE0E0E0);
+    }
+
+    private void centeredNote(GuiGraphics graphics, String translationKey, int y)
+    {
+        graphics.drawCenteredString(this.font, Component.translatable(translationKey), this.width / 2, y, 0xC8D3E0);
+    }
+
+    private int panelWidth()
+    {
+        return Math.min(PANEL_MAX_WIDTH, this.width - 32);
+    }
+
+    private int panelLeft()
+    {
+        return (this.width - this.panelWidth()) / 2;
+    }
+
+    private int panelRight()
+    {
+        return this.panelLeft() + this.panelWidth();
+    }
+
+    private int panelBottom()
+    {
+        return switch (this.page)
+        {
+            case PROFILES -> 320;
+            case BALANCE -> 270;
+            case ENERGY -> 242;
+            case IC2_TO_BC, DISCOVERY -> 218;
+            case OVERRIDES -> 210;
+            case BC_TO_IC2 -> 202;
+            case COMPATIBILITY -> 188;
+        };
+    }
+
+    private int controlX()
+    {
+        return this.panelLeft() + PANEL_PADDING;
+    }
+
+    private int controlWidth()
+    {
+        return this.panelWidth() - PANEL_PADDING * 2;
+    }
+
+    private int labelX()
+    {
+        return this.panelLeft() + PANEL_PADDING;
+    }
+
+    private Component enumLabel(Enum<?> value)
+    {
+        return Component.translatable("screen.bcic2fuelbridge.enum." + value.name().toLowerCase());
     }
 
     @Override
@@ -491,17 +651,20 @@ public final class BridgeConfigScreen extends Screen
 
     private enum Page
     {
-        BALANCE("Balance"),
-        PROFILES("9 fuels"),
-        FALLBACK("Fallback"),
-        DISCOVERY("Discovery"),
-        OVERRIDES("Overrides");
+        ENERGY("screen.bcic2fuelbridge.category.energy"),
+        BC_TO_IC2("screen.bcic2fuelbridge.category.bc_to_ic2"),
+        PROFILES("screen.bcic2fuelbridge.category.profiles"),
+        IC2_TO_BC("screen.bcic2fuelbridge.category.ic2_to_bc"),
+        BALANCE("screen.bcic2fuelbridge.category.balance"),
+        OVERRIDES("screen.bcic2fuelbridge.category.overrides"),
+        DISCOVERY("screen.bcic2fuelbridge.category.discovery"),
+        COMPATIBILITY("screen.bcic2fuelbridge.category.compatibility");
 
-        private final String label;
+        private final String translationKey;
 
-        Page(String label)
+        Page(String translationKey)
         {
-            this.label = label;
+            this.translationKey = translationKey;
         }
     }
 
@@ -517,7 +680,14 @@ public final class BridgeConfigScreen extends Screen
         private boolean classPackageFallback;
         private boolean logSkippedOilFuelIds;
         private boolean useBuiltInProfiles;
+        private boolean energyBridgeEnabled;
+        private boolean bcToIc2Enabled;
+        private boolean ic2ToBcEnabled;
+        private boolean ic2ToBcAutoDiscovery;
+        private EnergyConversionMode energyConversionMode;
+        private EnergyTransferLimitMode transferLimitMode;
         private String namespaceTokens;
+        private String ic2ToBcNamespaceTokens;
         private String referenceVolumeMb;
         private String energyMultiplier;
         private String oilEnergyEuPerReferenceUnit;
@@ -525,8 +695,11 @@ public final class BridgeConfigScreen extends Screen
         private String fuelEnergyEuPerReferenceUnit;
         private String fuelCycleAmountMb;
         private String euPerMj;
+        private String transferLimitEuPerTick;
         private String ceCycleAmountMb;
         private String customRules;
+        private String ic2ToBcBurnTimeTicks;
+        private String ic2ToBcCustomRules;
         private final Map<String, FuelProfileDraft> fuelProfiles = new LinkedHashMap<>();
 
         private static Draft fromLoadedConfig()
@@ -536,7 +709,14 @@ public final class BridgeConfigScreen extends Screen
             result.classPackageFallback = BridgeConfig.CLASS_PACKAGE_FALLBACK.get();
             result.logSkippedOilFuelIds = BridgeConfig.LOG_SKIPPED_OIL_FUEL_IDS.get();
             result.useBuiltInProfiles = BridgeConfig.USE_BUILDCRAFT_CE_8_PROFILES.get();
+            result.energyBridgeEnabled = BridgeConfig.ENERGY_BRIDGE_ENABLED.get();
+            result.bcToIc2Enabled = BridgeConfig.FUEL_BRIDGE_BC_TO_IC2_ENABLED.get();
+            result.ic2ToBcEnabled = BridgeConfig.FUEL_BRIDGE_IC2_TO_BC_ENABLED.get();
+            result.ic2ToBcAutoDiscovery = BridgeConfig.IC2_TO_BC_AUTO_DISCOVERY.get();
+            result.energyConversionMode = BridgeConfig.ENERGY_CONVERSION_MODE.get();
+            result.transferLimitMode = BridgeConfig.ENERGY_TRANSFER_LIMIT_MODE.get();
             result.namespaceTokens = join(BridgeConfig.NAMESPACE_TOKENS.get(), ", ");
+            result.ic2ToBcNamespaceTokens = join(BridgeConfig.IC2_TO_BC_NAMESPACE_TOKENS.get(), ", ");
             result.referenceVolumeMb = String.valueOf(BridgeConfig.REFERENCE_UNIT_VOLUME_MB.get());
             result.energyMultiplier = decimal(BridgeConfig.ENERGY_MULTIPLIER.get());
             result.oilEnergyEuPerReferenceUnit = decimal(BridgeConfig.OIL_ENERGY_EU_PER_REFERENCE_UNIT.get());
@@ -544,8 +724,11 @@ public final class BridgeConfigScreen extends Screen
             result.fuelEnergyEuPerReferenceUnit = decimal(BridgeConfig.FUEL_ENERGY_EU_PER_REFERENCE_UNIT.get());
             result.fuelCycleAmountMb = String.valueOf(BridgeConfig.FUEL_CYCLE_AMOUNT_MB.get());
             result.euPerMj = decimal(BridgeConfig.EU_PER_BUILDCRAFT_MJ.get());
+            result.transferLimitEuPerTick = decimal(BridgeConfig.ENERGY_TRANSFER_LIMIT_EU_PER_TICK.get());
             result.ceCycleAmountMb = String.valueOf(BridgeConfig.BUILDCRAFT_CE_CYCLE_AMOUNT_MB.get());
             result.customRules = join(BridgeConfig.CUSTOM_FUEL_RULES.get(), " | ");
+            result.ic2ToBcBurnTimeTicks = String.valueOf(BridgeConfig.IC2_TO_BC_BURN_TIME_TICKS.get());
+            result.ic2ToBcCustomRules = join(BridgeConfig.IC2_TO_BC_CUSTOM_FUEL_RULES.get(), " | ");
             for (BuildCraftCeFuelProfiles.FuelDefinition fuel : BuildCraftCeFuelProfiles.definitions())
             {
                 BridgeConfig.BuildCraftCeFuelSettings settings = BridgeConfig.getBuildCraftCeFuelSettings(fuel.id());

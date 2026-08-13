@@ -1,0 +1,12 @@
+{
+  "replace": false,
+  "values": [
+    "buildcraftbuilders:quarry",
+    "buildcraftbuilders:builder",
+    "buildcraftbuilders:filler",
+    "buildcraftfactory:mining_well",
+    "buildcraftfactory:distiller",
+    "buildcraftfactory:chute",
+    "buildcraftsilicon:laser"
+  ]
+}
