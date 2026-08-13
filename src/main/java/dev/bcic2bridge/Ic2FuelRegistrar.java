@@ -38,6 +38,12 @@ public final class Ic2FuelRegistrar
 
     public static synchronized RegistrationResult registerAll(String phase)
     {
+        if (!BridgeConfig.FUEL_BRIDGE_BC_TO_IC2_ENABLED.get())
+        {
+            LOGGER.info("BuildCraft → IC2 fuel bridge is disabled; skipping registration during {}.", phase);
+            return new RegistrationResult(0, 0, 0, true);
+        }
+
         Object manager = findManager();
         if (manager == null)
         {

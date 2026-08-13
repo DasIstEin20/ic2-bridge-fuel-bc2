@@ -69,13 +69,15 @@ final class BuildCraftCeFuelProfiles
             return null;
         }
 
-        double euPerMj = mode == BuildCraftFuelMode.MANUAL
-                ? settings.manualEuPerBuildCraftMj.get()
-                : BridgeConfig.EU_PER_BUILDCRAFT_MJ.get();
+        double euPerMb = mode == BuildCraftFuelMode.MANUAL
+                ? EnergyConversionService.applyFuelBalance(
+                        definition.megaJoulesPerMb() * settings.manualEuPerBuildCraftMj.get()
+                )
+                : EnergyConversionService.buildCraftFuelEuPerMb(definition.megaJoulesPerMb());
         return FuelRule.fromEnergyDensity(
                 BridgeConfig.BUILDCRAFT_CE_CYCLE_AMOUNT_MB.get(),
-                definition.megaJoulesPerMb() * euPerMj,
-                BridgeConfig.ENERGY_MULTIPLIER.get(),
+                euPerMb,
+                1.0D,
                 mode == BuildCraftFuelMode.MANUAL
                         ? "BuildCraft CE manual profile"
                         : "BuildCraft CE 8.0.13 profile"

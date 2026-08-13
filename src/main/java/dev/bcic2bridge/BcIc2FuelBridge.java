@@ -28,6 +28,7 @@ public final class BcIc2FuelBridge
         modEventBus.addListener(this::onLoadComplete);
 
         MinecraftForge.EVENT_BUS.addListener(this::onServerAboutToStart);
+        new Ic2ToBuildCraftEnergyBridge().register();
     }
 
     static FMLJavaModLoadingContext loadingContext()
@@ -41,16 +42,22 @@ public final class BcIc2FuelBridge
 
     private void onCommonSetup(FMLCommonSetupEvent event)
     {
-        event.enqueueWork(() -> Ic2FuelRegistrar.registerAll("common setup"));
+        event.enqueueWork(() -> this.registerFuelBridges("common setup"));
     }
 
     private void onLoadComplete(FMLLoadCompleteEvent event)
     {
-        event.enqueueWork(() -> Ic2FuelRegistrar.registerAll("load complete"));
+        event.enqueueWork(() -> this.registerFuelBridges("load complete"));
     }
 
     private void onServerAboutToStart(ServerAboutToStartEvent event)
     {
-        Ic2FuelRegistrar.registerAll("server about to start");
+        this.registerFuelBridges("server about to start");
+    }
+
+    private void registerFuelBridges(String phase)
+    {
+        Ic2FuelRegistrar.registerAll(phase);
+        Ic2ToBuildCraftFuelRegistrar.registerAll(phase);
     }
 }
