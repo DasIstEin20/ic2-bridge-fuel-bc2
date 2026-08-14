@@ -128,7 +128,7 @@ gradlew.bat build
 ## Release artifact
 
 The ready-to-install build for this source revision is included as
-[`releases/bcic2fuelbridge-0.2.2.jar`](releases/bcic2fuelbridge-0.2.2.jar).
+[`releases/bcic2fuelbridge-0.2.3.jar`](releases/bcic2fuelbridge-0.2.3.jar).
 Place that single JAR in the instance's `mods` directory together with IC2 and,
 optionally, BuildCraft. Remove older copies of the bridge first so Forge does
 not load two versions of the same mod.
