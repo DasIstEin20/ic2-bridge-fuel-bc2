@@ -55,9 +55,15 @@ public final class Ic2ToBuildCraftEnergyBridge
     private Capability<?> mjReceiverCapability;
     private Class<?> mjReceiverType;
     private boolean apiUnavailableLogged;
+    private boolean registered;
 
-    public void register()
+    public synchronized void register()
     {
+        if (this.registered)
+        {
+            return;
+        }
+        this.registered = true;
         MinecraftForge.EVENT_BUS.addListener(this::onChunkLoad);
         MinecraftForge.EVENT_BUS.addListener(this::onChunkUnload);
         MinecraftForge.EVENT_BUS.addListener(this::onEntityPlace);

@@ -25,7 +25,6 @@ public final class Ic2ToBuildCraftFuelRegistrar
 {
     private static final Logger LOGGER = LoggerFactory.getLogger(BcIc2FuelBridge.MOD_ID);
     private static final String IC2_RECIPES = "ic2.api.recipe.Recipes";
-    private static final String BC_FUEL_REGISTRY = "buildcraft.api.fuels.BuildcraftFuelRegistry";
 
     private Ic2ToBuildCraftFuelRegistrar()
     {
@@ -39,10 +38,16 @@ public final class Ic2ToBuildCraftFuelRegistrar
             return new RegistrationResult(0, 0, false);
         }
 
+        if (!BuildCraftCompatibilityResolver.resolve().ic2ToBuildCraftFuels())
+        {
+            LOGGER.debug("IC2 → BuildCraft fuel bridge is inactive during {}: no compatible BuildCraft fuel registry was found.", phase);
+            return new RegistrationResult(0, 0, false);
+        }
+
         try
         {
             Object ic2Manager = getStaticField(IC2_RECIPES, "semiFluidGenerator");
-            Object bcManager = getStaticField(BC_FUEL_REGISTRY, "fuel");
+            Object bcManager = BuildCraftCompatibilityResolver.findCompatibleFuelRegistryManager();
             if (ic2Manager == null || bcManager == null)
             {
                 LOGGER.debug(

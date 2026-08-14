@@ -13,6 +13,8 @@ import net.minecraftforge.eventbus.api.IEventBus;
 import net.minecraftforge.registries.DeferredRegister;
 import net.minecraftforge.registries.ForgeRegistries;
 import net.minecraftforge.registries.RegistryObject;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * IC2-compatible filled cells for BuildCraft CE's combustion fuels.
@@ -24,6 +26,7 @@ import net.minecraftforge.registries.RegistryObject;
 public final class BridgeFuelCells
 {
     private static final String BUILDCRAFT_ENERGY = "buildcraftenergy";
+    private static final Logger LOGGER = LoggerFactory.getLogger(BcIc2FuelBridge.MOD_ID);
     private static final ResourceLocation IC2_TOOLS_TAB = ResourceLocation.fromNamespaceAndPath("ic2", "tools_and_utilities");
     private static final DeferredRegister<Item> ITEMS = DeferredRegister.create(ForgeRegistries.ITEMS, BcIc2FuelBridge.MOD_ID);
 
@@ -69,9 +72,15 @@ public final class BridgeFuelCells
         Fluid fluid = ForgeRegistries.FLUIDS.getValue(fluidId);
         if (fluid == null)
         {
-            throw new IllegalStateException(
-                    "BuildCraft CE fluid " + fluidId + " was not registered before IC2 fuel cells were created."
+            // Fuel cells are a convenience for the standard CE fluid IDs, not a
+            // prerequisite for the generic registry fuel bridge. A fork can use
+            // different IDs without being allowed to abort Forge item loading.
+            LOGGER.warn(
+                    "Optional BuildCraft fuel cell for {} is unavailable because that fluid is not registered. "
+                            + "The bridge will continue with registry-based fuel discovery.",
+                    fluidId
             );
+            return new Item(new Item.Properties());
         }
 
         try
@@ -87,12 +96,22 @@ public final class BridgeFuelCells
         }
         catch (ClassNotFoundException | NoSuchMethodException | InstantiationException | IllegalAccessException exception)
         {
-            throw new IllegalStateException("Could not construct IC2 fuel cell for " + fluidId + ".", exception);
+            LOGGER.warn(
+                    "Optional IC2 fuel cell for {} could not be created; the registry fuel bridge remains active: {}",
+                    fluidId,
+                    exception.toString()
+            );
+            return new Item(new Item.Properties());
         }
         catch (InvocationTargetException exception)
         {
             Throwable cause = exception.getCause() == null ? exception : exception.getCause();
-            throw new IllegalStateException("IC2 rejected fuel cell for " + fluidId + ".", cause);
+            LOGGER.warn(
+                    "IC2 rejected optional BuildCraft fuel cell for {}; the registry fuel bridge remains active: {}",
+                    fluidId,
+                    cause.toString()
+            );
+            return new Item(new Item.Properties());
         }
     }
 

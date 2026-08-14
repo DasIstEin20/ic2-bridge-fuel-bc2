@@ -2,6 +2,14 @@
 
 Compatibility layer for BuildCraft Community Edition and IC2 on Minecraft Forge 1.20.1. The repository name remains `ic2-bridge-fuel-bc2` for continuity, but the in-game name is **BuildCraft x IC2 Bridge**.
 
+## BuildCraft compatibility (0.2.2)
+
+BuildCraft is optional and has no hard minimum version in `mods.toml`. The bridge does not stop Forge from loading just because a BuildCraft fork reports an older, newer, or unfamiliar version.
+
+At runtime `BuildCraftCompatibilityResolver` probes public API features first: the `IMjReceiver` capability, a usable combustion-fuel registry, and BuildCraft fluids in Forge's registry. A version string is diagnostic only. The resolver labels verified CE 8.x and CE 7.99.x APIs when their features are present; an unfamiliar release receives the **Generic / BEST_EFFORT** reflection and registry fallback.
+
+Energy, BuildCraft → IC2 fuels, IC2 → BuildCraft fuels, and fluid discovery are independent capabilities. If one API is absent, the other working capabilities remain enabled and Forge startup continues. The in-game **Compatibility** page reports the selected BuildCraft module ID and version, adapter, mode, and the status of every capability.
+
 ## Modules
 
 ### Energy Bridge — IC2 → BuildCraft
@@ -102,7 +110,7 @@ Exact rules take priority over automatic discovery. Restart the server after cha
 - Minecraft 1.20.1
 - Forge 47.x
 - IC2 for Forge 1.20.1
-- BuildCraft Community Edition 8.0.13+1.20.1+forge or compatible API release
+- BuildCraft is optional; BuildCraft CE 7.99.25.0 and CE 8.x are recognized when their public APIs are present. Other releases are attempted in BEST_EFFORT mode.
 
 ## Build
 

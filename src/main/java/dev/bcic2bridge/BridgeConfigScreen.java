@@ -66,7 +66,7 @@ public final class BridgeConfigScreen extends Screen
             case IC2_TO_BC -> this.addIc2ToBuildCraftWidgets();
             case DISCOVERY -> this.addDiscoveryWidgets();
             case OVERRIDES -> this.addOverrideWidgets();
-            case COMPATIBILITY -> { }
+            case COMPATIBILITY -> BuildCraftCompatibilityResolver.resolve();
         }
 
         int buttonY = this.height - 28;
@@ -574,11 +574,49 @@ public final class BridgeConfigScreen extends Screen
                 this.label(graphics, "screen.bcic2fuelbridge.field.ic2_to_bc_rules", 158);
             }
             case COMPATIBILITY -> {
-                this.centeredNote(graphics, "screen.bcic2fuelbridge.note.compatibility_1", 102);
-                this.centeredNote(graphics, "screen.bcic2fuelbridge.note.compatibility_2", 130);
-                this.centeredNote(graphics, "screen.bcic2fuelbridge.note.compatibility_3", 158);
+                this.renderCompatibility(graphics);
             }
         }
+    }
+
+    private void renderCompatibility(GuiGraphics graphics)
+    {
+        BuildCraftCompatibilityResolver.Snapshot compatibility = BuildCraftCompatibilityResolver.latest();
+        int x = this.labelX();
+        graphics.drawString(this.font, Component.translatable(
+                "screen.bcic2fuelbridge.compat.detected",
+                compatibility.detected()
+                        ? compatibility.modId() + " " + compatibility.version()
+                        : Component.translatable("screen.bcic2fuelbridge.compat.not_detected")
+        ), x, 78, 0xE0E0E0);
+        graphics.drawString(this.font, Component.translatable(
+                "screen.bcic2fuelbridge.compat.adapter",
+                compatibility.adapter().displayName()
+        ), x, 100, 0xE0E0E0);
+        graphics.drawString(this.font, Component.translatable(
+                "screen.bcic2fuelbridge.compat.mode",
+                compatibility.modeName()
+        ), x, 122, compatibility.bestEffort() ? 0xFFFF55 : 0xC8D3E0);
+        graphics.drawString(this.font, this.compatibilityFeature("screen.bcic2fuelbridge.compat.energy", compatibility.energyBridge()), x, 148, 0xE0E0E0);
+        graphics.drawString(this.font, this.compatibilityFeature("screen.bcic2fuelbridge.compat.bc_to_ic2", compatibility.buildCraftToIc2Fuels()), x, 170, 0xE0E0E0);
+        graphics.drawString(this.font, this.compatibilityFeature("screen.bcic2fuelbridge.compat.ic2_to_bc", compatibility.ic2ToBuildCraftFuels()), x, 192, 0xE0E0E0);
+        graphics.drawString(this.font, Component.translatable(
+                "screen.bcic2fuelbridge.compat.fluid_discovery",
+                compatibilityFeatureName(compatibility.fluidDiscovery()),
+                compatibility.discoveredBuildCraftFluids()
+        ), x, 214, 0xE0E0E0);
+    }
+
+    private Component compatibilityFeature(String key, boolean available)
+    {
+        return Component.translatable(key, compatibilityFeatureName(available));
+    }
+
+    private Component compatibilityFeatureName(boolean available)
+    {
+        return Component.translatable(available
+                ? "screen.bcic2fuelbridge.compat.available"
+                : "screen.bcic2fuelbridge.compat.unavailable");
     }
 
     private void label(GuiGraphics graphics, String translationKey, int y)
@@ -616,7 +654,7 @@ public final class BridgeConfigScreen extends Screen
             case IC2_TO_BC, DISCOVERY -> 218;
             case OVERRIDES -> 210;
             case BC_TO_IC2 -> 202;
-            case COMPATIBILITY -> 188;
+            case COMPATIBILITY -> 238;
         };
     }
 

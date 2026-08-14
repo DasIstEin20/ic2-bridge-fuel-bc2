@@ -44,6 +44,12 @@ public final class Ic2FuelRegistrar
             return new RegistrationResult(0, 0, 0, true);
         }
 
+        if (!BuildCraftCompatibilityResolver.resolve().buildCraftToIc2Fuels())
+        {
+            LOGGER.debug("BuildCraft → IC2 fuel bridge is inactive during {}: no BuildCraft fluids were found.", phase);
+            return new RegistrationResult(0, 0, 0, false);
+        }
+
         Object manager = findManager();
         if (manager == null)
         {

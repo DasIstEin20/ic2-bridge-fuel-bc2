@@ -32,7 +32,7 @@ side="BOTH"
 
 [[dependencies.${mod_id}]]
 modId="buildcraftenergy"
-mandatory=true
-versionRange="[8.0.13,)"
+mandatory=false
+versionRange="[0,)"
 ordering="AFTER"
 side="BOTH"

@@ -8,12 +8,16 @@ import net.minecraftforge.fml.config.ModConfig;
 import net.minecraftforge.fml.event.lifecycle.FMLCommonSetupEvent;
 import net.minecraftforge.fml.event.lifecycle.FMLLoadCompleteEvent;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 @Mod(BcIc2FuelBridge.MOD_ID)
 public final class BcIc2FuelBridge
 {
     public static final String MOD_ID = "bcic2fuelbridge";
+    private static final Logger LOGGER = LoggerFactory.getLogger(MOD_ID);
     private static FMLJavaModLoadingContext loadingContext;
+    private final Ic2ToBuildCraftEnergyBridge energyBridge = new Ic2ToBuildCraftEnergyBridge();
 
     public BcIc2FuelBridge(FMLJavaModLoadingContext context)
     {
@@ -23,12 +27,28 @@ public final class BcIc2FuelBridge
         context.registerConfig(ModConfig.Type.SERVER, BridgeConfig.SPEC);
 
         IEventBus modEventBus = context.getModEventBus();
-        BridgeFuelCells.register(modEventBus);
+        BuildCraftCompatibilityResolver.Snapshot compatibility = BuildCraftCompatibilityResolver.resolve();
+        BuildCraftCompatibilityResolver.logCompatibility(compatibility);
+        if ("buildcraftenergy".equals(compatibility.modId()))
+        {
+            BridgeFuelCells.register(modEventBus);
+        }
+        else if (compatibility.detected())
+        {
+            LOGGER.info("BuildCraft Energy module was not detected; skipping the optional pre-filled BC fuel-cell items.");
+        }
         modEventBus.addListener(this::onCommonSetup);
         modEventBus.addListener(this::onLoadComplete);
 
         MinecraftForge.EVENT_BUS.addListener(this::onServerAboutToStart);
-        new Ic2ToBuildCraftEnergyBridge().register();
+        if (compatibility.detected())
+        {
+            this.energyBridge.register();
+        }
+        if (compatibility.detected() && !compatibility.energyBridge())
+        {
+            LOGGER.info("BuildCraft MJ receiver API was not detected yet; the energy bridge will keep probing receivers while fuel features remain available.");
+        }
     }
 
     static FMLJavaModLoadingContext loadingContext()
@@ -57,7 +77,25 @@ public final class BcIc2FuelBridge
 
     private void registerFuelBridges(String phase)
     {
-        Ic2FuelRegistrar.registerAll(phase);
-        Ic2ToBuildCraftFuelRegistrar.registerAll(phase);
+        BuildCraftCompatibilityResolver.Snapshot compatibility = BuildCraftCompatibilityResolver.resolve();
+        BuildCraftCompatibilityResolver.logCompatibility(compatibility);
+
+        if (compatibility.buildCraftToIc2Fuels())
+        {
+            Ic2FuelRegistrar.registerAll(phase);
+        }
+        else
+        {
+            LOGGER.debug("BuildCraft → IC2 fuel bridge is unavailable during {}: no BuildCraft fluids were found in Forge's registry.", phase);
+        }
+
+        if (compatibility.ic2ToBuildCraftFuels())
+        {
+            Ic2ToBuildCraftFuelRegistrar.registerAll(phase);
+        }
+        else
+        {
+            LOGGER.debug("IC2 → BuildCraft fuel bridge is unavailable during {}: no compatible BuildCraft fuel registry was found.", phase);
+        }
     }
 }
