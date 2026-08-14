@@ -17,7 +17,8 @@ public final class BcIc2FuelBridge
     public static final String MOD_ID = "bcic2fuelbridge";
     private static final Logger LOGGER = LoggerFactory.getLogger(MOD_ID);
     private static FMLJavaModLoadingContext loadingContext;
-    private final Ic2ToBuildCraftEnergyBridge energyBridge = new Ic2ToBuildCraftEnergyBridge();
+    private final Ic2ToBuildCraftEnergyBridge ic2ToBuildCraftEnergyBridge = new Ic2ToBuildCraftEnergyBridge();
+    private final BuildCraftToIc2EnergyBridge buildCraftToIc2EnergyBridge = new BuildCraftToIc2EnergyBridge();
 
     public BcIc2FuelBridge(FMLJavaModLoadingContext context)
     {
@@ -43,11 +44,12 @@ public final class BcIc2FuelBridge
         MinecraftForge.EVENT_BUS.addListener(this::onServerAboutToStart);
         if (compatibility.detected())
         {
-            this.energyBridge.register();
+            this.ic2ToBuildCraftEnergyBridge.register();
+            this.buildCraftToIc2EnergyBridge.register();
         }
-        if (compatibility.detected() && !compatibility.energyBridge())
+        if (compatibility.detected() && !compatibility.energyBridge() && !compatibility.buildCraftToIc2EnergyBridge())
         {
-            LOGGER.info("BuildCraft MJ receiver API was not detected yet; the energy bridge will keep probing receivers while fuel features remain available.");
+            LOGGER.info("BuildCraft MJ receiver/provider APIs were not detected yet; the energy bridges will keep probing endpoints while fuel features remain available.");
         }
     }
 

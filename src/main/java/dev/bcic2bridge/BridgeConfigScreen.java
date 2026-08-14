@@ -110,13 +110,15 @@ public final class BridgeConfigScreen extends Screen
     {
         this.addToggle("screen.bcic2fuelbridge.toggle.energy", this.draft.energyBridgeEnabled,
                 value -> this.draft.energyBridgeEnabled = value, 94);
-        this.addEnergyModeButton(122);
-        EditBox ratio = this.addInput("euPerMj", "screen.bcic2fuelbridge.field.eu_per_mj", this.draft.euPerMj, 150);
+        this.addToggle("screen.bcic2fuelbridge.toggle.energy_bc_to_ic2", this.draft.buildCraftToIc2EnergyBridgeEnabled,
+                value -> this.draft.buildCraftToIc2EnergyBridgeEnabled = value, 122);
+        this.addEnergyModeButton(150);
+        EditBox ratio = this.addInput("euPerMj", "screen.bcic2fuelbridge.field.eu_per_mj", this.draft.euPerMj, 178);
         ratio.setEditable(this.canSave && this.draft.energyConversionMode == EnergyConversionMode.MANUAL);
         ratio.active = this.canSave && this.draft.energyConversionMode == EnergyConversionMode.MANUAL;
         ratio.setTooltip(Tooltip.create(Component.translatable("screen.bcic2fuelbridge.tooltip.conversion_mode", EnergyConversionService.AUTO_EU_PER_MJ)));
-        this.addTransferLimitModeButton(178);
-        EditBox limit = this.addInput("transferLimit", "screen.bcic2fuelbridge.field.transfer_limit", this.draft.transferLimitEuPerTick, 206);
+        this.addTransferLimitModeButton(206);
+        EditBox limit = this.addInput("transferLimit", "screen.bcic2fuelbridge.field.transfer_limit", this.draft.transferLimitEuPerTick, 234);
         limit.setEditable(this.canSave && this.draft.transferLimitMode == EnergyTransferLimitMode.MANUAL);
         limit.active = this.canSave && this.draft.transferLimitMode == EnergyTransferLimitMode.MANUAL;
         limit.setTooltip(Tooltip.create(Component.translatable("screen.bcic2fuelbridge.tooltip.transfer_limit")));
@@ -393,6 +395,7 @@ public final class BridgeConfigScreen extends Screen
             BridgeConfig.CLASS_PACKAGE_FALLBACK.set(this.draft.classPackageFallback);
             BridgeConfig.LOG_SKIPPED_OIL_FUEL_IDS.set(this.draft.logSkippedOilFuelIds);
             BridgeConfig.ENERGY_BRIDGE_ENABLED.set(this.draft.energyBridgeEnabled);
+            BridgeConfig.BUILDCRAFT_TO_IC2_ENERGY_BRIDGE_ENABLED.set(this.draft.buildCraftToIc2EnergyBridgeEnabled);
             BridgeConfig.ENERGY_CONVERSION_MODE.set(this.draft.energyConversionMode);
             BridgeConfig.EU_PER_BUILDCRAFT_MJ.set(euPerMj);
             BridgeConfig.ENERGY_TRANSFER_LIMIT_MODE.set(this.draft.transferLimitMode);
@@ -522,8 +525,8 @@ public final class BridgeConfigScreen extends Screen
         {
             case ENERGY -> {
                 this.centeredNote(graphics, "screen.bcic2fuelbridge.note.energy", 70);
-                this.label(graphics, "screen.bcic2fuelbridge.field.eu_per_mj", 156);
-                this.label(graphics, "screen.bcic2fuelbridge.field.transfer_limit", 212);
+                this.label(graphics, "screen.bcic2fuelbridge.field.eu_per_mj", 184);
+                this.label(graphics, "screen.bcic2fuelbridge.field.transfer_limit", 240);
             }
             case BC_TO_IC2 -> {
                 this.centeredNote(graphics, "screen.bcic2fuelbridge.note.bc_to_ic2", 70);
@@ -597,14 +600,15 @@ public final class BridgeConfigScreen extends Screen
                 "screen.bcic2fuelbridge.compat.mode",
                 compatibility.modeName()
         ), x, 122, compatibility.bestEffort() ? 0xFFFF55 : 0xC8D3E0);
-        graphics.drawString(this.font, this.compatibilityFeature("screen.bcic2fuelbridge.compat.energy", compatibility.energyBridge()), x, 148, 0xE0E0E0);
-        graphics.drawString(this.font, this.compatibilityFeature("screen.bcic2fuelbridge.compat.bc_to_ic2", compatibility.buildCraftToIc2Fuels()), x, 170, 0xE0E0E0);
-        graphics.drawString(this.font, this.compatibilityFeature("screen.bcic2fuelbridge.compat.ic2_to_bc", compatibility.ic2ToBuildCraftFuels()), x, 192, 0xE0E0E0);
+        graphics.drawString(this.font, this.compatibilityFeature("screen.bcic2fuelbridge.compat.energy_ic2_to_bc", compatibility.energyBridge()), x, 148, 0xE0E0E0);
+        graphics.drawString(this.font, this.compatibilityFeature("screen.bcic2fuelbridge.compat.energy_bc_to_ic2", compatibility.buildCraftToIc2EnergyBridge()), x, 170, 0xE0E0E0);
+        graphics.drawString(this.font, this.compatibilityFeature("screen.bcic2fuelbridge.compat.bc_to_ic2", compatibility.buildCraftToIc2Fuels()), x, 192, 0xE0E0E0);
+        graphics.drawString(this.font, this.compatibilityFeature("screen.bcic2fuelbridge.compat.ic2_to_bc", compatibility.ic2ToBuildCraftFuels()), x, 214, 0xE0E0E0);
         graphics.drawString(this.font, Component.translatable(
                 "screen.bcic2fuelbridge.compat.fluid_discovery",
                 compatibilityFeatureName(compatibility.fluidDiscovery()),
                 compatibility.discoveredBuildCraftFluids()
-        ), x, 214, 0xE0E0E0);
+        ), x, 236, 0xE0E0E0);
     }
 
     private Component compatibilityFeature(String key, boolean available)
@@ -650,11 +654,11 @@ public final class BridgeConfigScreen extends Screen
         {
             case PROFILES -> 320;
             case BALANCE -> 270;
-            case ENERGY -> 242;
+            case ENERGY -> 270;
             case IC2_TO_BC, DISCOVERY -> 218;
             case OVERRIDES -> 210;
             case BC_TO_IC2 -> 202;
-            case COMPATIBILITY -> 238;
+            case COMPATIBILITY -> 260;
         };
     }
 
@@ -719,6 +723,7 @@ public final class BridgeConfigScreen extends Screen
         private boolean logSkippedOilFuelIds;
         private boolean useBuiltInProfiles;
         private boolean energyBridgeEnabled;
+        private boolean buildCraftToIc2EnergyBridgeEnabled;
         private boolean bcToIc2Enabled;
         private boolean ic2ToBcEnabled;
         private boolean ic2ToBcAutoDiscovery;
@@ -748,6 +753,7 @@ public final class BridgeConfigScreen extends Screen
             result.logSkippedOilFuelIds = BridgeConfig.LOG_SKIPPED_OIL_FUEL_IDS.get();
             result.useBuiltInProfiles = BridgeConfig.USE_BUILDCRAFT_CE_8_PROFILES.get();
             result.energyBridgeEnabled = BridgeConfig.ENERGY_BRIDGE_ENABLED.get();
+            result.buildCraftToIc2EnergyBridgeEnabled = BridgeConfig.BUILDCRAFT_TO_IC2_ENERGY_BRIDGE_ENABLED.get();
             result.bcToIc2Enabled = BridgeConfig.FUEL_BRIDGE_BC_TO_IC2_ENABLED.get();
             result.ic2ToBcEnabled = BridgeConfig.FUEL_BRIDGE_IC2_TO_BC_ENABLED.get();
             result.ic2ToBcAutoDiscovery = BridgeConfig.IC2_TO_BC_AUTO_DISCOVERY.get();

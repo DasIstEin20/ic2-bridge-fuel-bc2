@@ -30,6 +30,7 @@ public final class BuildCraftCompatibilityResolver
     private static final Logger LOGGER = LoggerFactory.getLogger(BcIc2FuelBridge.MOD_ID);
     private static final String MJ_API = "buildcraft.api.mj.MjAPI";
     private static final String MJ_RECEIVER = "buildcraft.api.mj.IMjReceiver";
+    private static final String MJ_PASSIVE_PROVIDER = "buildcraft.api.mj.IMjPassiveProvider";
     private static final String[] FUEL_REGISTRY_CLASSES = {
             "buildcraft.api.fuels.BuildcraftFuelRegistry",
             "buildcraft.api.fuels.BcFuelRegistry"
@@ -87,11 +88,12 @@ public final class BuildCraftCompatibilityResolver
         }
 
         LOGGER.info(
-                "BuildCraft detected: {} {}. Adapter: {}; energy={}, BC→IC2 fuels={}, IC2→BC fuels={}, fluid discovery={}.",
+                "BuildCraft detected: {} {}. Adapter: {}; IC2→BC energy={}, BC→IC2 energy={}, BC→IC2 fuels={}, IC2→BC fuels={}, fluid discovery={}.",
                 snapshot.modId(),
                 snapshot.version(),
                 snapshot.adapter().displayName(),
                 availability(snapshot.energyBridge()),
+                availability(snapshot.buildCraftToIc2EnergyBridge()),
                 availability(snapshot.buildCraftToIc2Fuels()),
                 availability(snapshot.ic2ToBuildCraftFuels()),
                 availability(snapshot.fluidDiscovery())
@@ -129,6 +131,7 @@ public final class BuildCraftCompatibilityResolver
                 buildCraft.version(),
                 adapter,
                 probe.energyBridge(),
+                probe.buildCraftToIc2EnergyBridge(),
                 probe.buildCraftToIc2Fuels(),
                 probe.ic2ToBuildCraftFuels(),
                 probe.discoveredBuildCraftFluids()
@@ -182,6 +185,7 @@ public final class BuildCraftCompatibilityResolver
     private static Probe probeApi()
     {
         boolean energyBridge = hasMjReceiverApi();
+        boolean buildCraftToIc2EnergyBridge = hasMjPassiveProviderApi();
         FuelRegistryProbe fuelRegistry = findFuelRegistry();
         int buildCraftFluidCount = countBuildCraftFluids();
         boolean fluidDiscovery = buildCraftFluidCount > 0;
@@ -191,7 +195,7 @@ public final class BuildCraftCompatibilityResolver
         // BuildCraft fluids. This stays useful even where BC's energy API moved.
         boolean buildCraftToIc2Fuels = fluidDiscovery;
         boolean ic2ToBuildCraftFuels = fuelRegistry.supported();
-        return new Probe(energyBridge, buildCraftToIc2Fuels, ic2ToBuildCraftFuels, buildCraftFluidCount, fuelRegistry);
+        return new Probe(energyBridge, buildCraftToIc2EnergyBridge, buildCraftToIc2Fuels, ic2ToBuildCraftFuels, buildCraftFluidCount, fuelRegistry);
     }
 
     private static boolean hasMjReceiverApi()
@@ -210,6 +214,28 @@ public final class BuildCraftCompatibilityResolver
             receiver.getMethod("getPowerRequested");
             receiver.getMethod("canReceive");
             receiver.getMethod("receivePower", long.class, FluidAction.class);
+            return true;
+        }
+        catch (ReflectiveOperationException | LinkageError exception)
+        {
+            return false;
+        }
+    }
+
+    private static boolean hasMjPassiveProviderApi()
+    {
+        try
+        {
+            ClassLoader loader = BuildCraftCompatibilityResolver.class.getClassLoader();
+            Class<?> api = Class.forName(MJ_API, false, loader);
+            Field capability = api.getField("CAP_PASSIVE_PROVIDER");
+            if (!Modifier.isStatic(capability.getModifiers()) || capability.get(null) == null)
+            {
+                return false;
+            }
+
+            Class<?> provider = Class.forName(MJ_PASSIVE_PROVIDER, false, loader);
+            provider.getMethod("extractPower", long.class, long.class, boolean.class);
             return true;
         }
         catch (ReflectiveOperationException | LinkageError exception)
@@ -368,6 +394,7 @@ public final class BuildCraftCompatibilityResolver
             String version,
             Adapter adapter,
             boolean energyBridge,
+            boolean buildCraftToIc2EnergyBridge,
             boolean buildCraftToIc2Fuels,
             boolean ic2ToBuildCraftFuels,
             int discoveredBuildCraftFluids
@@ -375,7 +402,7 @@ public final class BuildCraftCompatibilityResolver
     {
         private static Snapshot notDetected()
         {
-            return new Snapshot(false, "—", "—", Adapter.NONE, false, false, false, 0);
+            return new Snapshot(false, "—", "—", Adapter.NONE, false, false, false, false, 0);
         }
 
         public boolean fluidDiscovery()
@@ -390,7 +417,8 @@ public final class BuildCraftCompatibilityResolver
 
         public boolean allFeaturesAvailable()
         {
-            return this.energyBridge && this.buildCraftToIc2Fuels && this.ic2ToBuildCraftFuels && this.fluidDiscovery();
+            return this.energyBridge && this.buildCraftToIc2EnergyBridge
+                    && this.buildCraftToIc2Fuels && this.ic2ToBuildCraftFuels && this.fluidDiscovery();
         }
 
         public String modeName()
@@ -405,7 +433,8 @@ public final class BuildCraftCompatibilityResolver
         private String summary()
         {
             return this.detected + ":" + this.modId + ":" + this.version + ":" + this.adapter
-                    + ":" + this.energyBridge + ":" + this.buildCraftToIc2Fuels + ":" + this.ic2ToBuildCraftFuels
+                    + ":" + this.energyBridge + ":" + this.buildCraftToIc2EnergyBridge
+                    + ":" + this.buildCraftToIc2Fuels + ":" + this.ic2ToBuildCraftFuels
                     + ":" + this.discoveredBuildCraftFluids;
         }
     }
@@ -416,6 +445,7 @@ public final class BuildCraftCompatibilityResolver
 
     private record Probe(
             boolean energyBridge,
+            boolean buildCraftToIc2EnergyBridge,
             boolean buildCraftToIc2Fuels,
             boolean ic2ToBuildCraftFuels,
             int discoveredBuildCraftFluids,
@@ -424,7 +454,7 @@ public final class BuildCraftCompatibilityResolver
     {
         private boolean sharedCeApi()
         {
-            return this.energyBridge || this.fuelRegistry.supported();
+            return this.energyBridge || this.buildCraftToIc2EnergyBridge || this.fuelRegistry.supported();
         }
     }
 

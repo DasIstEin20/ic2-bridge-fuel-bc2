@@ -18,7 +18,13 @@ The bridge discovers BuildCraft's public `IMjReceiver` capability and registers 
 
 Connect an IC2 cable/emitter directly to a BuildCraft block that receives MJ. The bridge accepts EU from IC2 and inserts the corresponding micro-MJ into the receiver. The transfer is global ON/OFF and can either honor the receiver's own request (`AUTO`) or apply a per-receiver EU/t cap (`MANUAL`).
 
-The bridge also contributes BuildCraft CE's common MJ receiver blocks to IC2's `forge:cable_connectable` tag. This is a client-visible compatibility detail: IC2 cable arms now extend flush to the machine face instead of visually stopping short. It includes Quarry, Builder, Filler, Mining Well, Distiller, Chute, and Laser; the actual power bridge still discovers any `IMjReceiver` dynamically.
+The bridge also contributes BuildCraft CE's common MJ endpoint blocks to IC2's `forge:cable_connectable` tag. This is a client-visible compatibility detail: IC2 cable arms now extend flush to the machine face instead of visually stopping short. It includes BC engines, Quarry, Builder, Filler, Mining Well, Distiller, Chute, and Laser; the actual power bridge still discovers compatible capabilities dynamically.
+
+### Energy Bridge — BuildCraft → IC2
+
+The bridge discovers BuildCraft's public `IMjPassiveProvider` capability and registers an IC2 EnergyNet source for every provider block entity. Connect the producer's output face to an IC2 cable; the available micro-MJ are converted to EU with the same central ratio and delivered through the normal IC2 grid, so IC2 cable voltage and transformer rules still apply.
+
+Both energy directions can be enabled independently. The shared transfer limit follows the BuildCraft endpoint's requested/offered rate in `AUTO`, or caps each bridged endpoint in EU/t in `MANUAL`.
 
 ### Fuel Bridge — BuildCraft → IC2
 
@@ -37,7 +43,7 @@ AUTO   2.5 EU / MJ
 MANUAL configured manualEuPerBuildCraftMj
 ```
 
-`AUTO` deliberately has a visible, stable default. Switch to `MANUAL` for a pack-specific ratio; the setting affects subsequent fuel registration after a restart as well as live energy transfers.
+`AUTO` deliberately has a visible, stable default. Switch to `MANUAL` for a pack-specific ratio; the setting affects subsequent fuel registration after a restart as well as live energy transfers in both directions.
 
 ## Configuration and UI
 
@@ -56,6 +62,7 @@ Important server-config sections:
 ```toml
 [energy]
     ic2ToBuildCraftEnabled = true
+    buildCraftToIc2Enabled = true
     conversionMode = "AUTO"
     manualEuPerBuildCraftMj = 2.5
     transferLimitMode = "AUTO"
@@ -117,6 +124,14 @@ Exact rules take priority over automatic discovery. Restart the server after cha
 ```text
 gradlew.bat build
 ```
+
+## Release artifact
+
+The ready-to-install build for this source revision is included as
+[`releases/bcic2fuelbridge-0.2.2.jar`](releases/bcic2fuelbridge-0.2.2.jar).
+Place that single JAR in the instance's `mods` directory together with IC2 and,
+optionally, BuildCraft. Remove older copies of the bridge first so Forge does
+not load two versions of the same mod.
 
 ## License
 

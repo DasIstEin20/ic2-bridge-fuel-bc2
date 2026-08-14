@@ -1,6 +1,7 @@
 {
   "replace": false,
   "values": [
+    "buildcraftcore:engine",
     "buildcraftbuilders:quarry",
     "buildcraftbuilders:builder",
     "buildcraftbuilders:filler",

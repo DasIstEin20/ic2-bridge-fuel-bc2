@@ -33,6 +33,7 @@ public final class BridgeConfig
     public static final ForgeConfigSpec.ConfigValue<List<? extends String>> IC2_TO_BC_CUSTOM_FUEL_RULES;
 
     public static final ForgeConfigSpec.BooleanValue ENERGY_BRIDGE_ENABLED;
+    public static final ForgeConfigSpec.BooleanValue BUILDCRAFT_TO_IC2_ENERGY_BRIDGE_ENABLED;
     public static final ForgeConfigSpec.EnumValue<EnergyConversionMode> ENERGY_CONVERSION_MODE;
     public static final ForgeConfigSpec.DoubleValue EU_PER_BUILDCRAFT_MJ;
     public static final ForgeConfigSpec.EnumValue<EnergyTransferLimitMode> ENERGY_TRANSFER_LIMIT_MODE;
@@ -53,6 +54,9 @@ public final class BridgeConfig
         ENERGY_BRIDGE_ENABLED = builder
                 .comment("Allow IC2 cables and emitters to power any BuildCraft block exposing an MJ receiver.")
                 .define("ic2ToBuildCraftEnabled", true);
+        BUILDCRAFT_TO_IC2_ENERGY_BRIDGE_ENABLED = builder
+                .comment("Allow BuildCraft MJ providers to emit converted EU into the IC2 EnergyNet.")
+                .define("buildCraftToIc2Enabled", true);
         ENERGY_CONVERSION_MODE = builder
                 .comment(
                         "AUTO uses the bridge default of " + EnergyConversionService.AUTO_EU_PER_MJ + " EU/MJ.",
@@ -63,10 +67,10 @@ public final class BridgeConfig
                 .comment("EU per BuildCraft MJ when conversionMode = MANUAL.")
                 .defineInRange("manualEuPerBuildCraftMj", EnergyConversionService.AUTO_EU_PER_MJ, 0.000001D, 1_000_000.0D);
         ENERGY_TRANSFER_LIMIT_MODE = builder
-                .comment("AUTO lets the MJ receiver request its own rate. MANUAL caps each bridged receiver in EU/t.")
+                .comment("AUTO follows the BuildCraft endpoint's requested or offered rate. MANUAL caps each bridged endpoint in EU/t.")
                 .defineEnum("transferLimitMode", EnergyTransferLimitMode.AUTO);
         ENERGY_TRANSFER_LIMIT_EU_PER_TICK = builder
-                .comment("Per-receiver EU/t cap used only when transferLimitMode = MANUAL.")
+                .comment("Per-endpoint EU/t cap used only when transferLimitMode = MANUAL.")
                 .defineInRange("manualTransferLimitEuPerTick", 128.0D, 0.000001D, 1_000_000_000.0D);
         builder.pop();
 
