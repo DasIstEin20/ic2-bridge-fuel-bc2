@@ -122,6 +122,11 @@ public final class BridgeConfigScreen extends Screen
         limit.setEditable(this.canSave && this.draft.transferLimitMode == EnergyTransferLimitMode.MANUAL);
         limit.active = this.canSave && this.draft.transferLimitMode == EnergyTransferLimitMode.MANUAL;
         limit.setTooltip(Tooltip.create(Component.translatable("screen.bcic2fuelbridge.tooltip.transfer_limit")));
+        this.addToggle("screen.bcic2fuelbridge.toggle.energy_ic2_to_fe", this.draft.ic2ToForgeEnergyBridgeEnabled,
+                value -> this.draft.ic2ToForgeEnergyBridgeEnabled = value, 262);
+        this.addToggle("screen.bcic2fuelbridge.toggle.energy_forestry_to_ic2", this.draft.forestryToIc2EnergyBridgeEnabled,
+                value -> this.draft.forestryToIc2EnergyBridgeEnabled = value, 290);
+        this.addInput("forgeEnergyPerEu", "screen.bcic2fuelbridge.field.forge_energy_per_eu", this.draft.forgeEnergyPerEu, 318);
     }
 
     private void addBuildCraftToIc2Widgets()
@@ -300,6 +305,7 @@ public final class BridgeConfigScreen extends Screen
             case ENERGY -> {
                 this.draft.euPerMj = this.value("euPerMj");
                 this.draft.transferLimitEuPerTick = this.value("transferLimit");
+                this.draft.forgeEnergyPerEu = this.value("forgeEnergyPerEu");
             }
             case BC_TO_IC2 -> this.draft.ceCycleAmountMb = this.value("ceCycle");
             case BALANCE -> {
@@ -375,6 +381,7 @@ public final class BridgeConfigScreen extends Screen
             int fuelCycle = this.parseInt("Generic fuel cycle", this.draft.fuelCycleAmountMb, 1, 10_000);
             double euPerMj = this.parseDouble("EU per BuildCraft MJ", this.draft.euPerMj, 0.000001D, 1_000_000.0D);
             double transferLimit = this.parseDouble("Transfer limit", this.draft.transferLimitEuPerTick, 0.000001D, 1_000_000_000.0D);
+            double forgeEnergyPerEu = this.parseDouble("Forge Energy per EU", this.draft.forgeEnergyPerEu, 0.000001D, 1_000_000.0D);
             int ceCycle = this.parseInt("CE burn cycle", this.draft.ceCycleAmountMb, 1, 10_000);
             int ic2ToBcBurnTicks = this.parseInt("IC2 → BuildCraft burn time", this.draft.ic2ToBcBurnTimeTicks, 1, 2_000_000);
 
@@ -396,6 +403,9 @@ public final class BridgeConfigScreen extends Screen
             BridgeConfig.LOG_SKIPPED_OIL_FUEL_IDS.set(this.draft.logSkippedOilFuelIds);
             BridgeConfig.ENERGY_BRIDGE_ENABLED.set(this.draft.energyBridgeEnabled);
             BridgeConfig.BUILDCRAFT_TO_IC2_ENERGY_BRIDGE_ENABLED.set(this.draft.buildCraftToIc2EnergyBridgeEnabled);
+            BridgeConfig.IC2_TO_FORGE_ENERGY_BRIDGE_ENABLED.set(this.draft.ic2ToForgeEnergyBridgeEnabled);
+            BridgeConfig.FORESTRY_TO_IC2_ENERGY_BRIDGE_ENABLED.set(this.draft.forestryToIc2EnergyBridgeEnabled);
+            BridgeConfig.FORGE_ENERGY_PER_EU.set(forgeEnergyPerEu);
             BridgeConfig.ENERGY_CONVERSION_MODE.set(this.draft.energyConversionMode);
             BridgeConfig.EU_PER_BUILDCRAFT_MJ.set(euPerMj);
             BridgeConfig.ENERGY_TRANSFER_LIMIT_MODE.set(this.draft.transferLimitMode);
@@ -527,6 +537,7 @@ public final class BridgeConfigScreen extends Screen
                 this.centeredNote(graphics, "screen.bcic2fuelbridge.note.energy", 70);
                 this.label(graphics, "screen.bcic2fuelbridge.field.eu_per_mj", 184);
                 this.label(graphics, "screen.bcic2fuelbridge.field.transfer_limit", 240);
+                this.label(graphics, "screen.bcic2fuelbridge.field.forge_energy_per_eu", 324);
             }
             case BC_TO_IC2 -> {
                 this.centeredNote(graphics, "screen.bcic2fuelbridge.note.bc_to_ic2", 70);
@@ -654,7 +665,7 @@ public final class BridgeConfigScreen extends Screen
         {
             case PROFILES -> 320;
             case BALANCE -> 270;
-            case ENERGY -> 270;
+            case ENERGY -> 354;
             case IC2_TO_BC, DISCOVERY -> 218;
             case OVERRIDES -> 210;
             case BC_TO_IC2 -> 202;
@@ -724,6 +735,8 @@ public final class BridgeConfigScreen extends Screen
         private boolean useBuiltInProfiles;
         private boolean energyBridgeEnabled;
         private boolean buildCraftToIc2EnergyBridgeEnabled;
+        private boolean ic2ToForgeEnergyBridgeEnabled;
+        private boolean forestryToIc2EnergyBridgeEnabled;
         private boolean bcToIc2Enabled;
         private boolean ic2ToBcEnabled;
         private boolean ic2ToBcAutoDiscovery;
@@ -739,6 +752,7 @@ public final class BridgeConfigScreen extends Screen
         private String fuelCycleAmountMb;
         private String euPerMj;
         private String transferLimitEuPerTick;
+        private String forgeEnergyPerEu;
         private String ceCycleAmountMb;
         private String customRules;
         private String ic2ToBcBurnTimeTicks;
@@ -754,6 +768,8 @@ public final class BridgeConfigScreen extends Screen
             result.useBuiltInProfiles = BridgeConfig.USE_BUILDCRAFT_CE_8_PROFILES.get();
             result.energyBridgeEnabled = BridgeConfig.ENERGY_BRIDGE_ENABLED.get();
             result.buildCraftToIc2EnergyBridgeEnabled = BridgeConfig.BUILDCRAFT_TO_IC2_ENERGY_BRIDGE_ENABLED.get();
+            result.ic2ToForgeEnergyBridgeEnabled = BridgeConfig.IC2_TO_FORGE_ENERGY_BRIDGE_ENABLED.get();
+            result.forestryToIc2EnergyBridgeEnabled = BridgeConfig.FORESTRY_TO_IC2_ENERGY_BRIDGE_ENABLED.get();
             result.bcToIc2Enabled = BridgeConfig.FUEL_BRIDGE_BC_TO_IC2_ENABLED.get();
             result.ic2ToBcEnabled = BridgeConfig.FUEL_BRIDGE_IC2_TO_BC_ENABLED.get();
             result.ic2ToBcAutoDiscovery = BridgeConfig.IC2_TO_BC_AUTO_DISCOVERY.get();
@@ -769,6 +785,7 @@ public final class BridgeConfigScreen extends Screen
             result.fuelCycleAmountMb = String.valueOf(BridgeConfig.FUEL_CYCLE_AMOUNT_MB.get());
             result.euPerMj = decimal(BridgeConfig.EU_PER_BUILDCRAFT_MJ.get());
             result.transferLimitEuPerTick = decimal(BridgeConfig.ENERGY_TRANSFER_LIMIT_EU_PER_TICK.get());
+            result.forgeEnergyPerEu = decimal(BridgeConfig.FORGE_ENERGY_PER_EU.get());
             result.ceCycleAmountMb = String.valueOf(BridgeConfig.BUILDCRAFT_CE_CYCLE_AMOUNT_MB.get());
             result.customRules = join(BridgeConfig.CUSTOM_FUEL_RULES.get(), " | ");
             result.ic2ToBcBurnTimeTicks = String.valueOf(BridgeConfig.IC2_TO_BC_BURN_TIME_TICKS.get());

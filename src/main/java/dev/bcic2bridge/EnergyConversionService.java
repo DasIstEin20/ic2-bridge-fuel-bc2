@@ -1,7 +1,7 @@
 package dev.bcic2bridge;
 
 /**
- * The single authority for every EU ↔ BuildCraft MJ conversion in this mod.
+ * The single authority for every energy-unit conversion in this mod.
  *
  * <p>BuildCraft stores energy as micro-MJ while its public API and this mod's
  * configuration are expressed in MJ. Keeping the conversion here prevents a
@@ -11,6 +11,8 @@ package dev.bcic2bridge;
 public final class EnergyConversionService
 {
     public static final double AUTO_EU_PER_MJ = 2.5D;
+    /** The conventional IC2-to-Forge-Energy ratio. */
+    public static final double AUTO_FORGE_ENERGY_PER_EU = 4.0D;
     public static final long MICRO_MJ_PER_MJ = 1_000_000L;
 
     private EnergyConversionService()
@@ -48,6 +50,22 @@ public final class EnergyConversionService
     public static double microMegaJoulesToEu(long microMegaJoules)
     {
         return microMegaJoules <= 0 ? 0.0D : megaJoulesToEu(microMegaJoules / (double) MICRO_MJ_PER_MJ);
+    }
+
+    public static int euToForgeEnergy(double eu)
+    {
+        if (!(eu > 0.0D) || !Double.isFinite(eu))
+        {
+            return 0;
+        }
+
+        double result = eu * BridgeConfig.FORGE_ENERGY_PER_EU.get();
+        return result >= Integer.MAX_VALUE ? Integer.MAX_VALUE : Math.max(0, (int) Math.floor(result));
+    }
+
+    public static double forgeEnergyToEu(int forgeEnergy)
+    {
+        return forgeEnergy <= 0 ? 0.0D : forgeEnergy / BridgeConfig.FORGE_ENERGY_PER_EU.get();
     }
 
     /** Applies the pack-wide fuel-only balance multiplier exactly once. */

@@ -1,8 +1,8 @@
 # BuildCraft x IC2 Bridge
 
-Compatibility layer for BuildCraft Community Edition and IC2 on Minecraft Forge 1.20.1. The repository name remains `ic2-bridge-fuel-bc2` for continuity, but the in-game name is **BuildCraft x IC2 Bridge**.
+Compatibility layer for BuildCraft Community Edition, Forestry, and IC2 on Minecraft Forge 1.20.1. The repository name remains `ic2-bridge-fuel-bc2` for continuity, but the in-game name is **BuildCraft x IC2 Bridge**.
 
-## BuildCraft compatibility (0.2.2)
+## BuildCraft compatibility (0.3.0)
 
 BuildCraft is optional and has no hard minimum version in `mods.toml`. The bridge does not stop Forge from loading just because a BuildCraft fork reports an older, newer, or unfamiliar version.
 
@@ -26,6 +26,31 @@ The bridge discovers BuildCraft's public `IMjPassiveProvider` capability and reg
 
 Both energy directions can be enabled independently. The shared transfer limit follows the BuildCraft endpoint's requested/offered rate in `AUTO`, or caps each bridged endpoint in EU/t in `MANUAL`.
 
+### Energy Bridge — IC2 → Forge Energy
+
+IC2 emitters and cables can power every non-IC2 block entity that exposes a receiving Forge Energy (`IEnergyStorage`) capability. The bridge is capability-based rather than tied to a fixed mod list, so it includes current FE machines such as **Refined Storage**, Forestry receivers, and future compatible mods.
+
+`energy.ic2ToForgeEnergyEnabled` enables this direction. `energy.forgeEnergyPerEu` controls the conversion; the default is **4 FE per EU**. The existing `AUTO`/`MANUAL` transfer limit also caps each FE endpoint in EU/t. The bridge intentionally does not turn arbitrary FE producers into IC2 sources; Forestry's explicit FE → IC2 support remains available separately.
+
+### BuildCraft transport pipes ↔ IC2 machines
+
+BuildCraft CE transport already uses Forge's common capabilities, which IC2 1.20.1 implements directly. No lossy proxy or per-machine conversion is needed:
+
+- fluid pipes use `ForgeCapabilities.FLUID_HANDLER`, so they can fill and drain IC2 tanks, generators, and fluid machines from their enabled sides;
+- item pipes use `ForgeCapabilities.ITEM_HANDLER`, so they can insert into and extract from IC2 inventories according to IC2's slot-side rules;
+- power pipes are covered by the MJ ↔ IC2 energy bridge above when their pipe definition exposes an `IMjReceiver` endpoint;
+- structure pipes do not carry fluids, items, or energy in BuildCraft itself and therefore have no transport capability to bridge.
+
+`buildcrafttransport` is declared as an optional dependency so the bridge is ordered after the Transport module when it is installed. Do not use the IC2 cable-connectable tag for a generic pipe holder: one holder can contain a fluid or item pipe, so marking all of them as electrical endpoints would create false cable connections.
+
+### Energy Bridge — Forestry ↔ IC2
+
+Forestry 2.10.2 exposes its machines and engines through Forge Energy (`IEnergyStorage`). When Forestry is installed, its receiving machines use the generic IC2 → Forge Energy bridge above, while Forestry engines additionally expose their output as an IC2 EnergyNet source:
+
+- Forestry → IC2: Forestry engines expose their FE output as an IC2 EnergyNet source.
+
+The adapter respects the side on which the FE capability is exposed, so an engine keeps using its configured output face. The shared FE/EU conversion and IC2 transfer limit are also respected.
+
 ### Fuel Bridge — BuildCraft → IC2
 
 BuildCraft CE combustion fluids are registered as IC2 Semifluid Generator fuels with their individual BuildCraft energy densities. The bridge also supplies filled IC2 cells for the standard CE fluids.
@@ -36,7 +61,7 @@ Accepted IC2 Semifluid Generator fuels are imported into BuildCraft's shared com
 
 ## One conversion authority
 
-`EnergyConversionService` is the only EU ↔ MJ conversion layer. The Energy Bridge and both fuel directions use it, so one ratio governs the whole mod:
+`EnergyConversionService` is the only energy-conversion layer. The BuildCraft energy and fuel bridges use one EU ↔ MJ ratio:
 
 ```text
 AUTO   2.5 EU / MJ
@@ -44,6 +69,8 @@ MANUAL configured manualEuPerBuildCraftMj
 ```
 
 `AUTO` deliberately has a visible, stable default. Switch to `MANUAL` for a pack-specific ratio; the setting affects subsequent fuel registration after a restart as well as live energy transfers in both directions.
+
+Forge Energy uses its own FE/EU setting; its default is `4.0 FE/EU`.
 
 ## Configuration and UI
 
@@ -63,6 +90,9 @@ Important server-config sections:
 [energy]
     ic2ToBuildCraftEnabled = true
     buildCraftToIc2Enabled = true
+    ic2ToForgeEnergyEnabled = true
+    forestryToIc2Enabled = true
+    forgeEnergyPerEu = 4.0
     conversionMode = "AUTO"
     manualEuPerBuildCraftMj = 2.5
     transferLimitMode = "AUTO"

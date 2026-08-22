@@ -19,6 +19,8 @@ public final class BcIc2FuelBridge
     private static FMLJavaModLoadingContext loadingContext;
     private final Ic2ToBuildCraftEnergyBridge ic2ToBuildCraftEnergyBridge = new Ic2ToBuildCraftEnergyBridge();
     private final BuildCraftToIc2EnergyBridge buildCraftToIc2EnergyBridge = new BuildCraftToIc2EnergyBridge();
+    private final Ic2ToForgeEnergyBridge ic2ToForgeEnergyBridge = new Ic2ToForgeEnergyBridge();
+    private final ForestryEnergyBridge forestryEnergyBridge = new ForestryEnergyBridge();
 
     public BcIc2FuelBridge(FMLJavaModLoadingContext context)
     {
@@ -46,6 +48,13 @@ public final class BcIc2FuelBridge
         {
             this.ic2ToBuildCraftEnergyBridge.register();
             this.buildCraftToIc2EnergyBridge.register();
+        }
+        this.ic2ToForgeEnergyBridge.register();
+        LOGGER.info("The IC2 → Forge Energy bridge is active for FE receivers, including future compatible mods.");
+        if (ForestryEnergyBridge.isForestryInstalled())
+        {
+            this.forestryEnergyBridge.register();
+            LOGGER.info("Forestry detected. The bidirectional Forestry Forge Energy ↔ IC2 bridge is active.");
         }
         if (compatibility.detected() && !compatibility.energyBridge() && !compatibility.buildCraftToIc2EnergyBridge())
         {

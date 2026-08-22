@@ -8,6 +8,17 @@
     "buildcraftfactory:mining_well",
     "buildcraftfactory:distiller",
     "buildcraftfactory:chute",
-    "buildcraftsilicon:laser"
+    "buildcraftsilicon:laser",
+    "forestry:engine_biogas",
+    "forestry:engine_clockwork",
+    "forestry:engine_peat",
+    "forestry:apiary",
+    "forestry:arboretum",
+    "forestry:carpenter",
+    "forestry:centrifuge",
+    "forestry:fermenter",
+    "forestry:moistener",
+    "forestry:squeezer",
+    "forestry:still"
   ]
 }

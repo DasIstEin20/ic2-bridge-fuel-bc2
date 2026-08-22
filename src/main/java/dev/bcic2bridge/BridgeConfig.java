@@ -34,6 +34,9 @@ public final class BridgeConfig
 
     public static final ForgeConfigSpec.BooleanValue ENERGY_BRIDGE_ENABLED;
     public static final ForgeConfigSpec.BooleanValue BUILDCRAFT_TO_IC2_ENERGY_BRIDGE_ENABLED;
+    public static final ForgeConfigSpec.BooleanValue IC2_TO_FORGE_ENERGY_BRIDGE_ENABLED;
+    public static final ForgeConfigSpec.BooleanValue FORESTRY_TO_IC2_ENERGY_BRIDGE_ENABLED;
+    public static final ForgeConfigSpec.DoubleValue FORGE_ENERGY_PER_EU;
     public static final ForgeConfigSpec.EnumValue<EnergyConversionMode> ENERGY_CONVERSION_MODE;
     public static final ForgeConfigSpec.DoubleValue EU_PER_BUILDCRAFT_MJ;
     public static final ForgeConfigSpec.EnumValue<EnergyTransferLimitMode> ENERGY_TRANSFER_LIMIT_MODE;
@@ -57,6 +60,15 @@ public final class BridgeConfig
         BUILDCRAFT_TO_IC2_ENERGY_BRIDGE_ENABLED = builder
                 .comment("Allow BuildCraft MJ providers to emit converted EU into the IC2 EnergyNet.")
                 .define("buildCraftToIc2Enabled", true);
+        IC2_TO_FORGE_ENERGY_BRIDGE_ENABLED = builder
+                .comment("Allow IC2 cables and emitters to power any non-IC2 machine exposing a Forge Energy (FE) receiver, including Forestry and Refined Storage.")
+                .define("ic2ToForgeEnergyEnabled", true);
+        FORESTRY_TO_IC2_ENERGY_BRIDGE_ENABLED = builder
+                .comment("Allow Forestry Forge Energy producers to emit converted EU into the IC2 EnergyNet.")
+                .define("forestryToIc2Enabled", true);
+        FORGE_ENERGY_PER_EU = builder
+                .comment("Forge Energy (FE) per EU for every IC2 → FE endpoint. The default 4 FE/EU matches the usual IC2 conversion.")
+                .defineInRange("forgeEnergyPerEu", EnergyConversionService.AUTO_FORGE_ENERGY_PER_EU, 0.000001D, 1_000_000.0D);
         ENERGY_CONVERSION_MODE = builder
                 .comment(
                         "AUTO uses the bridge default of " + EnergyConversionService.AUTO_EU_PER_MJ + " EU/MJ.",
