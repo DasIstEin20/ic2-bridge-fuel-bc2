@@ -1,52 +1,61 @@
 modLoader="javafml"
-loaderVersion="${loader_version_range}"
-license="${mod_license}"
+loaderVersion="${loader_version}"
+license="MIT"
 
 [[mods]]
-modId="${mod_id}"
-version="${mod_version}"
-displayName="${mod_name}"
-authors="${mod_authors}"
-description='''${mod_description}'''
+    modId="ic2universalenergy"
+    version="${version}"
+    displayName="IC2 Universal Energy Extension"
+    authors="DasIstEin20, bridge contributors; original Mekanism transmitter code by Aidancbrady, Thommy101, Thiakil, pupnewfster, dizzyd"
+    credits="Literal transmitter and Configurator code/assets from Mekanism 10.4.16; unpairedbracket, CyanideX, Ridanisaurus and other Mekanism contributors"
+    logoFile="logo.png"
+    description='''Forge 1.20.1 IC2 addon providing literal Mekanism cables and pipes, universal EU-to-FE delivery, BuildCraft energy and fuel conversion, and Forestry energy compatibility.'''
 
-[[dependencies.${mod_id}]]
-modId="forge"
-mandatory=true
-versionRange="${forge_version_range}"
-ordering="NONE"
-side="BOTH"
+[[dependencies.ic2universalenergy]]
+    modId="minecraft"
+    mandatory=true
+    versionRange="${mc_version}"
+    ordering="NONE"
+    side="BOTH"
 
-[[dependencies.${mod_id}]]
-modId="minecraft"
-mandatory=true
-versionRange="${minecraft_version_range}"
-ordering="NONE"
-side="BOTH"
+[[dependencies.ic2universalenergy]]
+    modId="forge"
+    mandatory=true
+    versionRange="${forge_version}"
+    ordering="NONE"
+    side="BOTH"
 
-[[dependencies.${mod_id}]]
-modId="ic2"
-mandatory=true
-versionRange="[0,)"
-ordering="AFTER"
-side="BOTH"
+[[dependencies.ic2universalenergy]]
+    modId="ic2"
+    mandatory=true
+    versionRange="[2.10.33-ex120]"
+    ordering="AFTER"
+    side="BOTH"
 
-[[dependencies.${mod_id}]]
-modId="buildcraftenergy"
-mandatory=false
-versionRange="[0,)"
-ordering="AFTER"
-side="BOTH"
+[[dependencies.ic2universalenergy]]
+    modId="buildcraftenergy"
+    mandatory=false
+    versionRange="[0,)"
+    ordering="AFTER"
+    side="BOTH"
 
-[[dependencies.${mod_id}]]
-modId="buildcrafttransport"
-mandatory=false
-versionRange="[0,)"
-ordering="AFTER"
-side="BOTH"
+[[dependencies.ic2universalenergy]]
+    modId="buildcrafttransport"
+    mandatory=false
+    versionRange="[0,)"
+    ordering="AFTER"
+    side="BOTH"
 
-[[dependencies.${mod_id}]]
-modId="forestry"
-mandatory=false
-versionRange="[0,)"
-ordering="AFTER"
-side="BOTH"
+[[dependencies.ic2universalenergy]]
+    modId="forestry"
+    mandatory=false
+    versionRange="[0,)"
+    ordering="AFTER"
+    side="BOTH"
+
+[[dependencies.ic2universalenergy]]
+    modId="refinedstorage"
+    mandatory=false
+    versionRange="[0,)"
+    ordering="AFTER"
+    side="BOTH"

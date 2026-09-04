@@ -1,0 +1,16 @@
+{
+    "ctm": {
+        "ctm_version": 1,
+        "type": "ctm:optifine_full"
+    },
+    "extra": {
+        "connect_to": [
+            {
+                "block": "ic2universalenergy:boiler_casing"
+            },
+            {
+                "block": "ic2universalenergy:boiler_valve"
+            }
+        ]
+    }
+}

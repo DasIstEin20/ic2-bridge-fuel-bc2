@@ -1,0 +1,19 @@
+{
+  "variants": {
+    "facing=north": {
+      "model": "ic2universalenergy:block/security_desk"
+    },
+    "facing=south": {
+      "model": "ic2universalenergy:block/security_desk",
+      "y": 180
+    },
+    "facing=east": {
+      "model": "ic2universalenergy:block/security_desk",
+      "y": 90
+    },
+    "facing=west": {
+      "model": "ic2universalenergy:block/security_desk",
+      "y": -90
+    }
+  }
+}

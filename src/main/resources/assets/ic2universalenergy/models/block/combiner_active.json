@@ -1,0 +1,6 @@
+{
+  "parent": "ic2universalenergy:block/combiner",
+  "textures": {
+    "front": "ic2universalenergy:block/combiner/front_active"
+  }
+}

@@ -1,0 +1,10 @@
+{
+  "variants": {
+    "storage=false": {
+      "model": "ic2universalenergy:block/cardboard_box"
+    },
+    "storage=true": {
+      "model": "ic2universalenergy:block/cardboard_box_storage"
+    }
+  }
+}

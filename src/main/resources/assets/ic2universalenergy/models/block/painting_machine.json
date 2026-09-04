@@ -1,0 +1,12 @@
+{
+  "parent": "ic2universalenergy:block/machine_back_port",
+  "textures": {
+    "sides": "ic2universalenergy:block/painting_machine/right",
+    "front": "ic2universalenergy:block/painting_machine/front",
+    "west": "ic2universalenergy:block/painting_machine/right",
+    "east": "ic2universalenergy:block/painting_machine/left",
+    "back": "ic2universalenergy:block/painting_machine/back",
+    "up": "ic2universalenergy:block/painting_machine/top",
+    "down": "ic2universalenergy:block/painting_machine/bottom"
+  }
+}

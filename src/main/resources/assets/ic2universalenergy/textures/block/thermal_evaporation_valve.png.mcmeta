@@ -1,0 +1,23 @@
+{
+    "ctm": {
+        "ctm_version": 1,
+        "type": "CTM",
+        "layer": "SOLID",
+        "textures": [
+            "ic2universalenergy:ctm/thermal_evaporation_valve"
+        ],
+        "extra": {
+            "connect_to": [
+                {
+                    "block": "ic2universalenergy:thermal_evaporation_block"
+                },
+                {
+                    "block": "ic2universalenergy:thermal_evaporation_controller"
+                },
+                {
+                    "block": "ic2universalenergy:thermal_evaporation_valve"
+                }
+            ]
+        }
+    }
+}

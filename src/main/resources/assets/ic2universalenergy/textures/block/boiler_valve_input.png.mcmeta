@@ -1,0 +1,20 @@
+{
+    "ctm": {
+        "ctm_version": 1,
+        "type": "CTM",
+        "layer": "SOLID",
+        "textures": [
+            "ic2universalenergy:ctm/boiler_valve_input"
+        ],
+        "extra": {
+            "connect_to": [
+                {
+                    "block": "ic2universalenergy:boiler_casing"
+                },
+                {
+                    "block": "ic2universalenergy:boiler_valve"
+                }
+            ]
+        }
+    }
+}

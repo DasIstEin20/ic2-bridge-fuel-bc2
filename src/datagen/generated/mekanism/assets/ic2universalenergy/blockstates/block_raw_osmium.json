@@ -1,0 +1,7 @@
+{
+  "variants": {
+    "": {
+      "model": "ic2universalenergy:block/storage/raw_osmium"
+    }
+  }
+}

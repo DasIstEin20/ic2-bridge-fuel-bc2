@@ -1,0 +1,7 @@
+{
+  "render_type": "minecraft:cutout",
+  "parent": "block/cube_all",
+  "textures": {
+    "all": "ic2universalenergy:block/structural_glass"
+  }
+}

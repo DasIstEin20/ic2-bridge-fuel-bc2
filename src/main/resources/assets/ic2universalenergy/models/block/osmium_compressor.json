@@ -1,0 +1,12 @@
+{
+  "parent": "ic2universalenergy:block/machine",
+  "textures": {
+    "sides": "ic2universalenergy:block/osmium_compressor/right",
+    "front": "ic2universalenergy:block/osmium_compressor/front",
+    "west": "ic2universalenergy:block/osmium_compressor/right",
+    "east": "ic2universalenergy:block/osmium_compressor/left",
+    "south": "ic2universalenergy:block/osmium_compressor/back",
+    "up": "ic2universalenergy:block/osmium_compressor/top",
+    "down": "ic2universalenergy:block/osmium_compressor/bottom"
+  }
+}

@@ -1,0 +1,20 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "key": {
+    "A": {
+      "tag": "ic2universalenergy:alloys/infused"
+    },
+    "P": {
+      "item": "ic2universalenergy:basic_logistical_transporter"
+    }
+  },
+  "pattern": [
+    "PPP",
+    "PAP",
+    "PPP"
+  ],
+  "result": {
+    "count": 8,
+    "item": "ic2universalenergy:advanced_logistical_transporter"
+  }
+}

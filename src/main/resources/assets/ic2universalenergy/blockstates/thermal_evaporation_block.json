@@ -1,0 +1,22 @@
+{
+    "variants": {
+        "": [
+            {
+                "model": "ic2universalenergy:block/thermal_evaporation/block",
+                "weight": 10
+            },
+            {
+                "model": "ic2universalenergy:block/thermal_evaporation/block_1",
+                "weight": 8
+            },
+            {
+                "model": "ic2universalenergy:block/thermal_evaporation/block_2",
+                "weight": 3
+            },
+            {
+                "model": "ic2universalenergy:block/thermal_evaporation/block_3",
+                "weight": 1
+            }
+        ]
+    }
+}

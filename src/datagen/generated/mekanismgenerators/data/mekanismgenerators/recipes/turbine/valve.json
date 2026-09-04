@@ -1,0 +1,20 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "key": {
+    "#": {
+      "item": "mekanismgenerators:turbine_casing"
+    },
+    "C": {
+      "tag": "forge:circuits/advanced"
+    }
+  },
+  "pattern": [
+    " # ",
+    "#C#",
+    " # "
+  ],
+  "result": {
+    "count": 2,
+    "item": "mekanismgenerators:turbine_valve"
+  }
+}

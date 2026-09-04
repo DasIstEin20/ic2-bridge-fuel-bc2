@@ -1,0 +1,26 @@
+{
+  "type": "mekanismtools:paxel",
+  "category": "equipment",
+  "key": {
+    "A": {
+      "tag": "forge:tools/axes/lapis_lazuli"
+    },
+    "P": {
+      "tag": "forge:tools/pickaxes/lapis_lazuli"
+    },
+    "R": {
+      "tag": "forge:rods/wooden"
+    },
+    "S": {
+      "tag": "forge:tools/shovels/lapis_lazuli"
+    }
+  },
+  "pattern": [
+    "APS",
+    " R ",
+    " R "
+  ],
+  "result": {
+    "item": "mekanismtools:lapis_lazuli_paxel"
+  }
+}

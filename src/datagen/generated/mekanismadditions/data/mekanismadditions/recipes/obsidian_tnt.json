@@ -1,0 +1,20 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "redstone",
+  "key": {
+    "O": {
+      "tag": "forge:obsidian"
+    },
+    "T": {
+      "item": "minecraft:tnt"
+    }
+  },
+  "pattern": [
+    "OOO",
+    "TTT",
+    "OOO"
+  ],
+  "result": {
+    "item": "mekanismadditions:obsidian_tnt"
+  }
+}

@@ -1,0 +1,21 @@
+{
+  "type": "mekanism:painting",
+  "chemicalInput": {
+    "amount": 64,
+    "pigment": "mekanism:lime"
+  },
+  "itemInput": {
+    "ingredient": {
+      "type": "forge:difference",
+      "base": {
+        "tag": "mekanismadditions:plastic_blocks/reinforced"
+      },
+      "subtracted": {
+        "item": "mekanismadditions:lime_reinforced_plastic"
+      }
+    }
+  },
+  "output": {
+    "item": "mekanismadditions:lime_reinforced_plastic"
+  }
+}

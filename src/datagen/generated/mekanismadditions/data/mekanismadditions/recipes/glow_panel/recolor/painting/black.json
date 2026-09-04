@@ -1,0 +1,21 @@
+{
+  "type": "mekanism:painting",
+  "chemicalInput": {
+    "amount": 64,
+    "pigment": "mekanism:black"
+  },
+  "itemInput": {
+    "ingredient": {
+      "type": "forge:difference",
+      "base": {
+        "tag": "mekanismadditions:glow_panels"
+      },
+      "subtracted": {
+        "item": "mekanismadditions:black_glow_panel"
+      }
+    }
+  },
+  "output": {
+    "item": "mekanismadditions:black_glow_panel"
+  }
+}

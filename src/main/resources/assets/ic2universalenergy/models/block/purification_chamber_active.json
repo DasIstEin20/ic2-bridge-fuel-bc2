@@ -1,0 +1,10 @@
+{
+  "parent": "ic2universalenergy:block/purification_chamber",
+  "textures": {
+    "front": "ic2universalenergy:block/purification_chamber/front_active",
+    "west": "ic2universalenergy:block/purification_chamber/right_active",
+    "east": "ic2universalenergy:block/purification_chamber/left_active",
+    "south": "ic2universalenergy:block/purification_chamber/back_active",
+    "up": "ic2universalenergy:block/purification_chamber/top_active"
+  }
+}

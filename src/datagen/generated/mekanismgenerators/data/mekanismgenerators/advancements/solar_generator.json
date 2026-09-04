@@ -1,0 +1,30 @@
+{
+  "parent": "mekanismgenerators:heat_generator",
+  "criteria": {
+    "solar_generator": {
+      "conditions": {
+        "items": [
+          {
+            "items": [
+              "mekanismgenerators:solar_generator"
+            ]
+          }
+        ]
+      },
+      "trigger": "minecraft:inventory_changed"
+    }
+  },
+  "display": {
+    "announce_to_chat": false,
+    "description": {
+      "translate": "advancements.mekanismgenerators.solar_generator.description"
+    },
+    "icon": {
+      "item": "mekanismgenerators:solar_generator"
+    },
+    "title": {
+      "translate": "advancements.mekanismgenerators.solar_generator.title"
+    }
+  },
+  "sends_telemetry_event": true
+}

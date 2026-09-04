@@ -1,0 +1,30 @@
+{
+  "variants": {
+    "facing=up": {
+      "model": "ic2universalenergy:block/laser_tractor_beam"
+    },
+    "facing=down": {
+      "model": "ic2universalenergy:block/laser_tractor_beam",
+      "x": 180
+    },
+    "facing=north": {
+      "model": "ic2universalenergy:block/laser_tractor_beam",
+      "x": -90,
+      "y": 180
+    },
+    "facing=south": {
+      "model": "ic2universalenergy:block/laser_tractor_beam",
+      "x": -90
+    },
+    "facing=east": {
+      "model": "ic2universalenergy:block/laser_tractor_beam",
+      "x": -90,
+      "y": -90
+    },
+    "facing=west": {
+      "model": "ic2universalenergy:block/laser_tractor_beam",
+      "x": -90,
+      "y": 90
+    }
+  }
+}

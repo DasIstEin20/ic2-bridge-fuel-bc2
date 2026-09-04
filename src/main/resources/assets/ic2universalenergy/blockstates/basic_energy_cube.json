@@ -1,0 +1,27 @@
+{
+  "variants": {
+    "facing=up": {
+      "model": "ic2universalenergy:block/energy_cube/basic",
+      "x": -90
+    },
+    "facing=down": {
+      "model": "ic2universalenergy:block/energy_cube/basic",
+      "x": 90
+    },
+    "facing=north": {
+      "model": "ic2universalenergy:block/energy_cube/basic"
+    },
+    "facing=south": {
+      "model": "ic2universalenergy:block/energy_cube/basic",
+      "y": 180
+    },
+    "facing=east": {
+      "model": "ic2universalenergy:block/energy_cube/basic",
+      "y": 90
+    },
+    "facing=west": {
+      "model": "ic2universalenergy:block/energy_cube/basic",
+      "y": -90
+    }
+  }
+}

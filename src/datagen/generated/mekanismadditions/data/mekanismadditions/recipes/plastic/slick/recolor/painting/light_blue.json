@@ -1,0 +1,21 @@
+{
+  "type": "mekanism:painting",
+  "chemicalInput": {
+    "amount": 64,
+    "pigment": "mekanism:light_blue"
+  },
+  "itemInput": {
+    "ingredient": {
+      "type": "forge:difference",
+      "base": {
+        "tag": "mekanismadditions:plastic_blocks/slick"
+      },
+      "subtracted": {
+        "item": "mekanismadditions:light_blue_slick_plastic"
+      }
+    }
+  },
+  "output": {
+    "item": "mekanismadditions:light_blue_slick_plastic"
+  }
+}

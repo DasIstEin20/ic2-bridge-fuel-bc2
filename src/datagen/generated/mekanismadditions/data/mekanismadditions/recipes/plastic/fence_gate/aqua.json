@@ -1,0 +1,19 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "redstone",
+  "key": {
+    "#": {
+      "item": "mekanismadditions:aqua_plastic"
+    },
+    "R": {
+      "tag": "forge:rods/plastic"
+    }
+  },
+  "pattern": [
+    "R#R",
+    "R#R"
+  ],
+  "result": {
+    "item": "mekanismadditions:aqua_plastic_fence_gate"
+  }
+}

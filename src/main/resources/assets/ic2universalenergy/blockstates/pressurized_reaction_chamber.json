@@ -1,0 +1,19 @@
+{
+  "variants": {
+    "facing=north": {
+      "model": "ic2universalenergy:block/pressurized_reaction_chamber"
+    },
+    "facing=south": {
+      "model": "ic2universalenergy:block/pressurized_reaction_chamber",
+      "y": 180
+    },
+    "facing=east": {
+      "model": "ic2universalenergy:block/pressurized_reaction_chamber",
+      "y": 90
+    },
+    "facing=west": {
+      "model": "ic2universalenergy:block/pressurized_reaction_chamber",
+      "y": -90
+    }
+  }
+}

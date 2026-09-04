@@ -1,0 +1,21 @@
+{
+  "type": "mekanism:painting",
+  "chemicalInput": {
+    "amount": 256,
+    "pigment": "mekanism:orange"
+  },
+  "itemInput": {
+    "ingredient": {
+      "type": "forge:difference",
+      "base": {
+        "tag": "mekanismadditions:balloons"
+      },
+      "subtracted": {
+        "item": "mekanismadditions:orange_balloon"
+      }
+    }
+  },
+  "output": {
+    "item": "mekanismadditions:orange_balloon"
+  }
+}

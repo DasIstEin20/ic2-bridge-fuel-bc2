@@ -1,0 +1,21 @@
+{
+  "type": "mekanism:painting",
+  "chemicalInput": {
+    "amount": 64,
+    "pigment": "mekanism:orange"
+  },
+  "itemInput": {
+    "ingredient": {
+      "type": "forge:difference",
+      "base": {
+        "tag": "forge:fence_gates/plastic"
+      },
+      "subtracted": {
+        "item": "mekanismadditions:orange_plastic_fence_gate"
+      }
+    }
+  },
+  "output": {
+    "item": "mekanismadditions:orange_plastic_fence_gate"
+  }
+}

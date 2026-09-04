@@ -1,0 +1,9 @@
+{
+  "parent": "ic2universalenergy:block/transmitter/small/small",
+  "textures": {
+    "side": "ic2universalenergy:block/models/multipart/basic_pressurized_tube_vertical",
+    "center_down": "ic2universalenergy:block/models/multipart/basic_pressurized_tube",
+    "side_opaque": "ic2universalenergy:block/models/multipart/opaque/basic_pressurized_tube_vertical",
+    "center_opaque": "ic2universalenergy:block/models/multipart/basic_pressurized_tube"
+  }
+}

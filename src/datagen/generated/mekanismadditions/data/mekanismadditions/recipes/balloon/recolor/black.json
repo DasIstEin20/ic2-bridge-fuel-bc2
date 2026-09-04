@@ -1,0 +1,20 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "ingredients": [
+    {
+      "type": "forge:difference",
+      "base": {
+        "tag": "mekanismadditions:balloons"
+      },
+      "subtracted": {
+        "item": "mekanismadditions:black_balloon"
+      }
+    },
+    {
+      "tag": "forge:dyes/black"
+    }
+  ],
+  "result": {
+    "item": "mekanismadditions:black_balloon"
+  }
+}

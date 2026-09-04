@@ -1,0 +1,15 @@
+{
+  "loader": "forge:composite",
+  "parent": "block/block",
+  "textures": {
+    "particle": "ic2universalenergy:block/nutritional_liquifier"
+  },
+  "children": {
+    "base": {
+      "parent": "ic2universalenergy:block/nutritional_liquifier_base"
+    },
+    "blade": {
+      "parent": "ic2universalenergy:block/liquifier_blade"
+    }
+  }
+}

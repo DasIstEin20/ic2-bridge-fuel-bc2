@@ -1,0 +1,6 @@
+{
+  "parent": "ic2universalenergy:block/energy_cube/base",
+  "textures": {
+    "corner": "ic2universalenergy:block/models/energy_cube_advanced_corner"
+  }
+}

@@ -1,0 +1,39 @@
+{
+    "ctm": {
+        "ctm_version": 1,
+        "type": "CTM",
+        "layer": "SOLID",
+        "textures": [
+            "ic2universalenergy:ctm/ultimate_induction_provider"
+        ],
+        "extra": {
+            "connect_to": [
+                {
+                    "block": "ic2universalenergy:basic_induction_cell"
+                },
+                {
+                    "block": "ic2universalenergy:advanced_induction_cell"
+                },
+                {
+                    "block": "ic2universalenergy:elite_induction_cell"
+                },
+                {
+                    "block": "ic2universalenergy:ultimate_induction_cell"
+                },
+                {
+                    "block": "ic2universalenergy:basic_induction_provider"
+                },
+                {
+                    "block": "ic2universalenergy:advanced_induction_provider"
+                },
+                {
+                    "block": "ic2universalenergy:elite_induction_provider"
+                },
+                {
+                    "block": "ic2universalenergy:ultimate_induction_provider"
+                }
+            ],
+            "connect_inside": true
+        }
+    }
+}

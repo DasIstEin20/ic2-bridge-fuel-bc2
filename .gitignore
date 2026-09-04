@@ -1,6 +1,10 @@
 .gradle/
+.gradle-user-home/
 build/
 run/
+runGameTests/
+src/datagen/generated/**/.cache/
+libs/*.jar
 out/
 .idea/
 *.iml

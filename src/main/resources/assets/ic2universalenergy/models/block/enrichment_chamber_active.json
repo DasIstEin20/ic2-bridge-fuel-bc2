@@ -1,0 +1,6 @@
+{
+  "parent": "ic2universalenergy:block/enrichment_chamber",
+  "textures": {
+    "front": "ic2universalenergy:block/enrichment_chamber/front_active"
+  }
+}

@@ -1,0 +1,20 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "key": {
+    "A": {
+      "tag": "ic2universalenergy:alloys/reinforced"
+    },
+    "P": {
+      "item": "ic2universalenergy:advanced_pressurized_tube"
+    }
+  },
+  "pattern": [
+    "PPP",
+    "PAP",
+    "PPP"
+  ],
+  "result": {
+    "count": 8,
+    "item": "ic2universalenergy:elite_pressurized_tube"
+  }
+}

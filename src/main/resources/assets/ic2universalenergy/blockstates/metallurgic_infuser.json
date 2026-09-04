@@ -1,0 +1,19 @@
+{
+  "variants": {
+    "facing=north": {
+      "model": "ic2universalenergy:block/metallurgic_infuser"
+    },
+    "facing=south": {
+      "model": "ic2universalenergy:block/metallurgic_infuser",
+      "y": 180
+    },
+    "facing=east": {
+      "model": "ic2universalenergy:block/metallurgic_infuser",
+      "y": 90
+    },
+    "facing=west": {
+      "model": "ic2universalenergy:block/metallurgic_infuser",
+      "y": -90
+    }
+  }
+}

@@ -1,0 +1,19 @@
+{
+    "ctm": {
+        "ctm_version": 1,
+        "type": "ctm:optifine_full",
+        "extra": {
+            "connect_to": [
+                {
+                    "block": "ic2universalenergy:thermal_evaporation_block"
+                },
+                {
+                    "block": "ic2universalenergy:thermal_evaporation_controller"
+                },
+                {
+                    "block": "ic2universalenergy:thermal_evaporation_valve"
+                }
+            ]
+        }
+    }    
+}

@@ -1,0 +1,7 @@
+{
+    "parent": "item/bow",
+    "textures": { 
+        "layer0": "ic2universalenergy:item/electric_bow_pulling_2"
+    },
+    "overrides": []
+}

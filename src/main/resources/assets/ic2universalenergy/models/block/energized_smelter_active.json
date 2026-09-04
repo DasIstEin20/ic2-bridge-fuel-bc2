@@ -1,0 +1,7 @@
+{
+  "parent": "ic2universalenergy:block/energized_smelter",
+  "textures": {
+    "front": "ic2universalenergy:block/energized_smelter/front_active",
+    "down": "ic2universalenergy:block/energized_smelter/bottom_active"
+  }
+}

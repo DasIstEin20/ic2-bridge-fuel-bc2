@@ -1,0 +1,28 @@
+{
+  "parent": "mekanism:root",
+  "criteria": {
+    "glow_panel": {
+      "conditions": {
+        "items": [
+          {
+            "tag": "mekanismadditions:glow_panels"
+          }
+        ]
+      },
+      "trigger": "minecraft:inventory_changed"
+    }
+  },
+  "display": {
+    "announce_to_chat": false,
+    "description": {
+      "translate": "advancements.mekanismadditions.glow_in_the_dark.description"
+    },
+    "icon": {
+      "item": "mekanismadditions:orange_glow_panel"
+    },
+    "title": {
+      "translate": "advancements.mekanismadditions.glow_in_the_dark.title"
+    }
+  },
+  "sends_telemetry_event": true
+}

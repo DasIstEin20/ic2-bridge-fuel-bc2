@@ -1,0 +1,22 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "key": {
+    "A": {
+      "tag": "mekanism:alloys/infused"
+    },
+    "C": {
+      "tag": "forge:circuits/advanced"
+    },
+    "S": {
+      "tag": "forge:ingots/steel"
+    }
+  },
+  "pattern": [
+    "SAS",
+    "CAC",
+    "SAS"
+  ],
+  "result": {
+    "item": "mekanismgenerators:rotational_complex"
+  }
+}

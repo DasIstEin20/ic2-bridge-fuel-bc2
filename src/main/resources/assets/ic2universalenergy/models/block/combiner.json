@@ -1,0 +1,12 @@
+{
+  "parent": "ic2universalenergy:block/machine",
+  "textures": {
+    "sides": "ic2universalenergy:block/combiner/right",
+    "front": "ic2universalenergy:block/combiner/front",
+    "west": "ic2universalenergy:block/combiner/right",
+    "east": "ic2universalenergy:block/combiner/left",
+    "south": "ic2universalenergy:block/combiner/back",
+    "up": "ic2universalenergy:block/combiner/top",
+    "down": "ic2universalenergy:block/combiner/bottom"
+  }
+}

@@ -1,0 +1,12 @@
+{
+  "parent": "ic2universalenergy:block/machine",
+  "textures": {
+    "sides": "ic2universalenergy:block/crusher/side",
+    "front": "ic2universalenergy:block/crusher/front",
+    "west": "ic2universalenergy:block/crusher/side",
+    "east": "ic2universalenergy:block/crusher/side",
+    "south": "ic2universalenergy:block/crusher/back",
+    "up": "ic2universalenergy:block/crusher/top",
+    "down": "ic2universalenergy:block/crusher/bottom"
+  }
+}

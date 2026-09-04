@@ -1,0 +1,27 @@
+{
+    "parent": "item/bow",
+    "textures": { 
+        "layer0": "ic2universalenergy:item/electric_bow"
+    },
+    "overrides": [
+    {
+        "predicate": {
+            "ic2universalenergy:pulling": 1
+        },
+        "model": "ic2universalenergy:item/electric_bow_pulling_0"
+    },
+    {
+        "predicate": {
+            "ic2universalenergy:pulling": 1,
+            "ic2universalenergy:pull": 0.65
+        },
+        "model": "ic2universalenergy:item/electric_bow_pulling_1"
+    },
+    {
+        "predicate": {
+            "ic2universalenergy:pulling": 1,
+            "ic2universalenergy:pull": 0.9
+        },
+        "model": "ic2universalenergy:item/electric_bow_pulling_2"
+    }]
+}

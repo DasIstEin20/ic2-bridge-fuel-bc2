@@ -1,0 +1,7 @@
+{
+  "variants": {
+    "": {
+      "model": "ic2universalenergy:block/transmitter/small/pressurized_tube/basic"
+    }
+  }
+}

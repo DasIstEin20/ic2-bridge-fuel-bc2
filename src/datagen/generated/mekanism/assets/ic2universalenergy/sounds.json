@@ -1,0 +1,277 @@
+{
+  "gui.digital_beep": {
+    "sounds": [
+      {
+        "name": "ic2universalenergy:gui/beep",
+        "pitch": 0.8
+      }
+    ]
+  },
+  "item.flamethrower.active": {
+    "sounds": [
+      "ic2universalenergy:item/flamethrower_active"
+    ],
+    "subtitle": "sound_event.ic2universalenergy.item.flamethrower.active"
+  },
+  "item.flamethrower.idle": {
+    "sounds": [
+      "ic2universalenergy:item/flamethrower_idle"
+    ],
+    "subtitle": "sound_event.ic2universalenergy.item.flamethrower.idle"
+  },
+  "item.geiger_elevated": {
+    "sounds": [
+      "ic2universalenergy:item/geiger_elevated"
+    ],
+    "subtitle": "sound_event.ic2universalenergy.item.geiger_elevated"
+  },
+  "item.geiger_fast": {
+    "sounds": [
+      "ic2universalenergy:item/geiger_fast"
+    ],
+    "subtitle": "sound_event.ic2universalenergy.item.geiger_fast"
+  },
+  "item.geiger_medium": {
+    "sounds": [
+      "ic2universalenergy:item/geiger_medium"
+    ],
+    "subtitle": "sound_event.ic2universalenergy.item.geiger_medium"
+  },
+  "item.geiger_slow": {
+    "sounds": [
+      "ic2universalenergy:item/geiger_slow"
+    ],
+    "subtitle": "sound_event.ic2universalenergy.item.geiger_slow"
+  },
+  "item.gravitational_modulation_unit": {
+    "sounds": [
+      "ic2universalenergy:item/gravitational_modulation_unit"
+    ],
+    "subtitle": "sound_event.ic2universalenergy.item.gravitational_modulation_unit"
+  },
+  "item.hydraulic": {
+    "sounds": [
+      "ic2universalenergy:item/hydraulic"
+    ],
+    "subtitle": "sound_event.ic2universalenergy.item.hydraulic"
+  },
+  "item.jetpack": {
+    "sounds": [
+      "ic2universalenergy:item/jetpack"
+    ],
+    "subtitle": "sound_event.ic2universalenergy.item.jetpack"
+  },
+  "item.scuba_mask": {
+    "sounds": [
+      "ic2universalenergy:item/scuba_mask"
+    ],
+    "subtitle": "sound_event.ic2universalenergy.item.scuba_mask"
+  },
+  "tile.christmas.1": {
+    "sounds": [
+      "ic2universalenergy:holiday/nutcracker1"
+    ],
+    "subtitle": "sound_event.ic2universalenergy.tile.machine.enrichment_chamber"
+  },
+  "tile.christmas.2": {
+    "sounds": [
+      "ic2universalenergy:holiday/nutcracker2"
+    ],
+    "subtitle": "sound_event.ic2universalenergy.tile.machine.metallurgic_infuser"
+  },
+  "tile.christmas.3": {
+    "sounds": [
+      "ic2universalenergy:holiday/nutcracker3"
+    ],
+    "subtitle": "sound_event.ic2universalenergy.tile.machine.purification_chamber"
+  },
+  "tile.christmas.4": {
+    "sounds": [
+      "ic2universalenergy:holiday/nutcracker4"
+    ],
+    "subtitle": "sound_event.ic2universalenergy.tile.machine.energized_smelter"
+  },
+  "tile.christmas.5": {
+    "sounds": [
+      "ic2universalenergy:holiday/nutcracker5"
+    ],
+    "subtitle": "sound_event.ic2universalenergy.tile.machine.crusher"
+  },
+  "tile.machine.antiprotonic_nucleosynthesizer": {
+    "sounds": [
+      "ic2universalenergy:tile/antiprotonic_nucleosynthesizer"
+    ],
+    "subtitle": "sound_event.ic2universalenergy.tile.machine.antiprotonic_nucleosynthesizer"
+  },
+  "tile.machine.chargepad": {
+    "sounds": [
+      "ic2universalenergy:tile/chargepad"
+    ],
+    "subtitle": "sound_event.ic2universalenergy.tile.machine.chargepad"
+  },
+  "tile.machine.chemical_crystallizer": {
+    "sounds": [
+      "ic2universalenergy:tile/chemical_crystallizer"
+    ],
+    "subtitle": "sound_event.ic2universalenergy.tile.machine.chemical_crystallizer"
+  },
+  "tile.machine.chemical_dissolution_chamber": {
+    "sounds": [
+      "ic2universalenergy:tile/chemical_dissolution_chamber"
+    ],
+    "subtitle": "sound_event.ic2universalenergy.tile.machine.chemical_dissolution_chamber"
+  },
+  "tile.machine.chemical_infuser": {
+    "sounds": [
+      "ic2universalenergy:tile/chemical_infuser"
+    ],
+    "subtitle": "sound_event.ic2universalenergy.tile.machine.chemical_infuser"
+  },
+  "tile.machine.chemical_injection_chamber": {
+    "sounds": [
+      "ic2universalenergy:tile/chemical_injection_chamber"
+    ],
+    "subtitle": "sound_event.ic2universalenergy.tile.machine.chemical_injection_chamber"
+  },
+  "tile.machine.chemical_oxidizer": {
+    "sounds": [
+      "ic2universalenergy:tile/chemical_oxidizer"
+    ],
+    "subtitle": "sound_event.ic2universalenergy.tile.machine.chemical_oxidizer"
+  },
+  "tile.machine.chemical_washer": {
+    "sounds": [
+      "ic2universalenergy:tile/chemical_washer"
+    ],
+    "subtitle": "sound_event.ic2universalenergy.tile.machine.chemical_washer"
+  },
+  "tile.machine.combiner": {
+    "sounds": [
+      "ic2universalenergy:tile/combiner"
+    ],
+    "subtitle": "sound_event.ic2universalenergy.tile.machine.combiner"
+  },
+  "tile.machine.compressor": {
+    "sounds": [
+      "ic2universalenergy:tile/compressor"
+    ],
+    "subtitle": "sound_event.ic2universalenergy.tile.machine.compressor"
+  },
+  "tile.machine.crusher": {
+    "sounds": [
+      "ic2universalenergy:tile/crusher"
+    ],
+    "subtitle": "sound_event.ic2universalenergy.tile.machine.crusher"
+  },
+  "tile.machine.electrolytic_separator": {
+    "sounds": [
+      "ic2universalenergy:tile/electrolytic_separator"
+    ],
+    "subtitle": "sound_event.ic2universalenergy.tile.machine.electrolytic_separator"
+  },
+  "tile.machine.energized_smelter": {
+    "sounds": [
+      "ic2universalenergy:tile/energized_smelter"
+    ],
+    "subtitle": "sound_event.ic2universalenergy.tile.machine.energized_smelter"
+  },
+  "tile.machine.enrichment_chamber": {
+    "sounds": [
+      "ic2universalenergy:tile/enrichment_chamber"
+    ],
+    "subtitle": "sound_event.ic2universalenergy.tile.machine.enrichment_chamber"
+  },
+  "tile.machine.industrial_alarm": {
+    "sounds": [
+      {
+        "attenuation_distance": 128,
+        "name": "ic2universalenergy:tile/industrial_alarm"
+      }
+    ],
+    "subtitle": "sound_event.ic2universalenergy.tile.machine.industrial_alarm"
+  },
+  "tile.machine.isotopic_centrifuge": {
+    "sounds": [
+      "ic2universalenergy:tile/isotopic_centrifuge"
+    ],
+    "subtitle": "sound_event.ic2universalenergy.tile.machine.isotopic_centrifuge"
+  },
+  "tile.machine.laser": {
+    "sounds": [
+      "ic2universalenergy:tile/laser"
+    ],
+    "subtitle": "sound_event.ic2universalenergy.tile.machine.laser"
+  },
+  "tile.machine.logistical_sorter": {
+    "sounds": [
+      "ic2universalenergy:tile/logistical_sorter"
+    ],
+    "subtitle": "sound_event.ic2universalenergy.tile.machine.logistical_sorter"
+  },
+  "tile.machine.metallurgic_infuser": {
+    "sounds": [
+      "ic2universalenergy:tile/metallurgic_infuser"
+    ],
+    "subtitle": "sound_event.ic2universalenergy.tile.machine.metallurgic_infuser"
+  },
+  "tile.machine.nutritional_liquifier": {
+    "sounds": [
+      "ic2universalenergy:tile/nutritional_liquifier"
+    ],
+    "subtitle": "sound_event.ic2universalenergy.tile.machine.nutritional_liquifier"
+  },
+  "tile.machine.painting_machine": {
+    "sounds": [
+      "ic2universalenergy:tile/painting_machine"
+    ],
+    "subtitle": "sound_event.ic2universalenergy.tile.machine.painting_machine"
+  },
+  "tile.machine.pigment_extractor": {
+    "sounds": [
+      "ic2universalenergy:tile/pigment_extractor"
+    ],
+    "subtitle": "sound_event.ic2universalenergy.tile.machine.pigment_extractor"
+  },
+  "tile.machine.pigment_mixer": {
+    "sounds": [
+      "ic2universalenergy:tile/pigment_mixer"
+    ],
+    "subtitle": "sound_event.ic2universalenergy.tile.machine.pigment_mixer"
+  },
+  "tile.machine.precision_sawmill": {
+    "sounds": [
+      "ic2universalenergy:tile/precision_sawmill"
+    ],
+    "subtitle": "sound_event.ic2universalenergy.tile.machine.precision_sawmill"
+  },
+  "tile.machine.pressurized_reaction_chamber": {
+    "sounds": [
+      "ic2universalenergy:tile/pressurized_reaction_chamber"
+    ],
+    "subtitle": "sound_event.ic2universalenergy.tile.machine.pressurized_reaction_chamber"
+  },
+  "tile.machine.purification_chamber": {
+    "sounds": [
+      "ic2universalenergy:tile/purification_chamber"
+    ],
+    "subtitle": "sound_event.ic2universalenergy.tile.machine.purification_chamber"
+  },
+  "tile.machine.resistive_heater": {
+    "sounds": [
+      "ic2universalenergy:tile/resistive_heater"
+    ],
+    "subtitle": "sound_event.ic2universalenergy.tile.machine.resistive_heater"
+  },
+  "tile.machine.rotary_condensentrator": {
+    "sounds": [
+      "ic2universalenergy:tile/rotary_condensentrator"
+    ],
+    "subtitle": "sound_event.ic2universalenergy.tile.machine.rotary_condensentrator"
+  },
+  "tile.machine.sps": {
+    "sounds": [
+      "ic2universalenergy:tile/sps"
+    ],
+    "subtitle": "sound_event.ic2universalenergy.tile.machine.sps"
+  }
+}

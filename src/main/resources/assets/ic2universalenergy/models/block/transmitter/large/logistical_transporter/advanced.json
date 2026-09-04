@@ -1,0 +1,9 @@
+{
+  "parent": "ic2universalenergy:block/transmitter/large/logistical_transporter/transporter",
+  "textures": {
+    "side": "ic2universalenergy:block/models/multipart/advanced_logistical_transporter_vertical",
+    "center_down": "ic2universalenergy:block/models/multipart/advanced_logistical_transporter",
+    "side_opaque": "ic2universalenergy:block/models/multipart/opaque/advanced_logistical_transporter_vertical",
+    "center_opaque": "ic2universalenergy:block/models/multipart/opaque/advanced_logistical_transporter"
+  }
+}

@@ -1,0 +1,10 @@
+{
+  "variants": {
+    "active=false": {
+      "model": "ic2universalenergy:block/fluid_tank"
+    },
+    "active=true": {
+      "model": "ic2universalenergy:block/fluid_tank_active"
+    }
+  }
+}

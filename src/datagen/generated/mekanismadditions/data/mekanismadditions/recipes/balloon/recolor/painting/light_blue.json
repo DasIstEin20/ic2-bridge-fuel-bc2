@@ -1,0 +1,21 @@
+{
+  "type": "mekanism:painting",
+  "chemicalInput": {
+    "amount": 256,
+    "pigment": "mekanism:light_blue"
+  },
+  "itemInput": {
+    "ingredient": {
+      "type": "forge:difference",
+      "base": {
+        "tag": "mekanismadditions:balloons"
+      },
+      "subtracted": {
+        "item": "mekanismadditions:light_blue_balloon"
+      }
+    }
+  },
+  "output": {
+    "item": "mekanismadditions:light_blue_balloon"
+  }
+}

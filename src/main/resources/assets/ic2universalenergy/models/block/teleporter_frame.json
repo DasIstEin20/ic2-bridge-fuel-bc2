@@ -1,0 +1,7 @@
+{
+    "parent": "ic2universalenergy:block/template/cube_all_led",
+    "textures": {
+        "all": "ic2universalenergy:block/teleporter_frame",
+        "led": "ic2universalenergy:block/teleporter_frame_led"
+    }
+}

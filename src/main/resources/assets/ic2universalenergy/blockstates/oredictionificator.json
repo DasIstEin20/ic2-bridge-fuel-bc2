@@ -1,0 +1,19 @@
+{
+  "variants": {
+    "facing=north": {
+      "model": "ic2universalenergy:block/oredictionificator"
+    },
+    "facing=south": {
+      "model": "ic2universalenergy:block/oredictionificator",
+      "y": 180
+    },
+    "facing=east": {
+      "model": "ic2universalenergy:block/oredictionificator",
+      "y": 90
+    },
+    "facing=west": {
+      "model": "ic2universalenergy:block/oredictionificator",
+      "y": -90
+    }
+  }
+}

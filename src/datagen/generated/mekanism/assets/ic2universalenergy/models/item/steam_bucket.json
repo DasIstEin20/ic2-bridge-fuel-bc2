@@ -1,0 +1,5 @@
+{
+  "parent": "forge:item/bucket",
+  "fluid": "ic2universalenergy:steam",
+  "loader": "forge:fluid_container"
+}

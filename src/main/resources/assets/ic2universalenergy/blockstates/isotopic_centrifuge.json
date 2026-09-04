@@ -1,0 +1,19 @@
+{
+  "variants": {
+    "facing=north": {
+      "model": "ic2universalenergy:block/isotopic_centrifuge"
+    },
+    "facing=south": {
+      "model": "ic2universalenergy:block/isotopic_centrifuge",
+      "y": 180
+    },
+    "facing=east": {
+      "model": "ic2universalenergy:block/isotopic_centrifuge",
+      "y": 90
+    },
+    "facing=west": {
+      "model": "ic2universalenergy:block/isotopic_centrifuge",
+      "y": -90
+    }
+  }
+}

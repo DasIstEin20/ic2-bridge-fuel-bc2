@@ -1,0 +1,14 @@
+{
+    "parent": "minecraft:item/generated",
+    "textures": { 
+        "layer0": "ic2universalenergy:item/geiger_counter_0"
+    },
+    "overrides": [
+        { "predicate": { "ic2universalenergy:radiation": 0 }, "model": "ic2universalenergy:item/geiger_counter_0" },
+        { "predicate": { "ic2universalenergy:radiation": 1 }, "model": "ic2universalenergy:item/geiger_counter_1" },
+        { "predicate": { "ic2universalenergy:radiation": 2 }, "model": "ic2universalenergy:item/geiger_counter_2" },
+        { "predicate": { "ic2universalenergy:radiation": 3 }, "model": "ic2universalenergy:item/geiger_counter_3" },
+        { "predicate": { "ic2universalenergy:radiation": 4 }, "model": "ic2universalenergy:item/geiger_counter_4" },
+        { "predicate": { "ic2universalenergy:radiation": 5 }, "model": "ic2universalenergy:item/geiger_counter_5" }
+    ]
+}

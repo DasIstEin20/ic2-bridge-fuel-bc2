@@ -1,0 +1,11 @@
+{
+  "parent": "ic2universalenergy:block/cardboard_box",
+  "overrides": [
+    {
+      "predicate": {
+        "ic2universalenergy:storage": 1
+      },
+      "model": "ic2universalenergy:item/cardboard_box_storage"
+    }
+  ]
+}

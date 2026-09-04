@@ -1,0 +1,26 @@
+{
+  "values": [
+    "ic2universalenergy:basic_universal_cable",
+    "ic2universalenergy:advanced_universal_cable",
+    "ic2universalenergy:elite_universal_cable",
+    "ic2universalenergy:ultimate_universal_cable",
+    "ic2universalenergy:basic_mechanical_pipe",
+    "ic2universalenergy:advanced_mechanical_pipe",
+    "ic2universalenergy:elite_mechanical_pipe",
+    "ic2universalenergy:ultimate_mechanical_pipe",
+    "ic2universalenergy:basic_pressurized_tube",
+    "ic2universalenergy:advanced_pressurized_tube",
+    "ic2universalenergy:elite_pressurized_tube",
+    "ic2universalenergy:ultimate_pressurized_tube",
+    "ic2universalenergy:basic_logistical_transporter",
+    "ic2universalenergy:advanced_logistical_transporter",
+    "ic2universalenergy:elite_logistical_transporter",
+    "ic2universalenergy:ultimate_logistical_transporter",
+    "ic2universalenergy:restrictive_transporter",
+    "ic2universalenergy:diversion_transporter",
+    "ic2universalenergy:basic_thermodynamic_conductor",
+    "ic2universalenergy:advanced_thermodynamic_conductor",
+    "ic2universalenergy:elite_thermodynamic_conductor",
+    "ic2universalenergy:ultimate_thermodynamic_conductor"
+  ]
+}

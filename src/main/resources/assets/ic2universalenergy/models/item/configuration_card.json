@@ -1,0 +1,14 @@
+{
+    "parent": "minecraft:item/generated",
+    "textures": { 
+        "layer0": "ic2universalenergy:item/configuration_card"
+    },
+    "overrides": [
+        {
+            "predicate": {
+                "ic2universalenergy:encoded": 1
+            },
+            "model": "ic2universalenergy:item/configuration_card_encoded"
+        }
+    ]
+}

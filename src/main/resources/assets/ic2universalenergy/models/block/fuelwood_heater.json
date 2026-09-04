@@ -1,0 +1,12 @@
+{
+  "parent": "ic2universalenergy:block/machine",
+  "textures": {
+    "sides": "ic2universalenergy:block/fuelwood_heater/right",
+    "front": "ic2universalenergy:block/fuelwood_heater/front",
+    "west": "ic2universalenergy:block/fuelwood_heater/right",
+    "east": "ic2universalenergy:block/fuelwood_heater/left",
+    "south": "ic2universalenergy:block/fuelwood_heater/back",
+    "up": "ic2universalenergy:block/fuelwood_heater/top",
+    "down": "ic2universalenergy:block/fuelwood_heater/bottom"
+  }
+}

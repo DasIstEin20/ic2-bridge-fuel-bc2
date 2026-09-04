@@ -1,0 +1,15 @@
+{
+	"loader": "forge:composite",
+	"parent": "block/block",
+	"textures": {
+		"particle": "ic2universalenergy:block/factory/purifying/purifying_factory_front"
+	},
+	"children": {
+		"base": {
+			"parent": "ic2universalenergy:block/factory/purifying/base"
+		},
+		"front_led": {
+			"parent": "ic2universalenergy:block/factory/front_led/ultimate"
+		}
+	}
+}

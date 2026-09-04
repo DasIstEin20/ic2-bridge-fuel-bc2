@@ -1,0 +1,7 @@
+{
+  "parent": "ic2universalenergy:block/dimensional_stabilizer",
+  "textures": {
+    "side": "ic2universalenergy:block/dimensional_stabilizer/side_active",
+    "top": "ic2universalenergy:block/dimensional_stabilizer/top_active"
+  }
+}

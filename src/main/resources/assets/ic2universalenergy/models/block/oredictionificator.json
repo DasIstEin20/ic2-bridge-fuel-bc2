@@ -1,0 +1,12 @@
+{
+  "parent": "ic2universalenergy:block/machine",
+  "textures": {
+    "sides": "ic2universalenergy:block/oredictionificator/right",
+    "front": "ic2universalenergy:block/oredictionificator/front",
+    "west": "ic2universalenergy:block/oredictionificator/right",
+    "east": "ic2universalenergy:block/oredictionificator/left",
+    "south": "ic2universalenergy:block/oredictionificator/back",
+    "up": "ic2universalenergy:block/oredictionificator/top",
+    "down": "ic2universalenergy:block/oredictionificator/bottom"
+  }
+}

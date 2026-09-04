@@ -1,0 +1,19 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "key": {
+    "#": {
+      "item": "mekanismadditions:aqua_plastic"
+    },
+    "R": {
+      "tag": "forge:rods/plastic"
+    }
+  },
+  "pattern": [
+    "#R#",
+    "#R#"
+  ],
+  "result": {
+    "count": 3,
+    "item": "mekanismadditions:aqua_plastic_fence"
+  }
+}

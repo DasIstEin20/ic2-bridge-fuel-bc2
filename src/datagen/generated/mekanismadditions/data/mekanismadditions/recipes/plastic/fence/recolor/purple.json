@@ -1,0 +1,27 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "building",
+  "key": {
+    "#": {
+      "type": "forge:difference",
+      "base": {
+        "tag": "forge:fences/plastic"
+      },
+      "subtracted": {
+        "item": "mekanismadditions:purple_plastic_fence"
+      }
+    },
+    "D": {
+      "tag": "forge:dyes/purple"
+    }
+  },
+  "pattern": [
+    " # ",
+    "#D#",
+    " # "
+  ],
+  "result": {
+    "count": 4,
+    "item": "mekanismadditions:purple_plastic_fence"
+  }
+}

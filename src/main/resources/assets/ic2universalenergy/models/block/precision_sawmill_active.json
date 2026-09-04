@@ -1,0 +1,10 @@
+{
+  "parent": "ic2universalenergy:block/precision_sawmill",
+  "textures": {
+    "front": "ic2universalenergy:block/precision_sawmill/front_active",
+    "west": "ic2universalenergy:block/precision_sawmill/right_active",
+    "east": "ic2universalenergy:block/precision_sawmill/left_active",
+    "south": "ic2universalenergy:block/precision_sawmill/back_active",
+    "up": "ic2universalenergy:block/precision_sawmill/top_active"
+  }
+}

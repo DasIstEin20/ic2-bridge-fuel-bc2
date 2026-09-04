@@ -1,0 +1,11 @@
+{
+  "parent": "ic2universalenergy:block/fuelwood_heater",
+  "textures": {
+    "front": "ic2universalenergy:block/fuelwood_heater/front_active",
+    "west": "ic2universalenergy:block/fuelwood_heater/right_active",
+    "east": "ic2universalenergy:block/fuelwood_heater/left_active",
+    "south": "ic2universalenergy:block/fuelwood_heater/back_active",
+    "up": "ic2universalenergy:block/fuelwood_heater/top_active",
+    "down": "ic2universalenergy:block/fuelwood_heater/bottom_active"
+  }
+}

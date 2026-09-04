@@ -1,0 +1,14 @@
+{
+    "parent": "minecraft:item/generated",
+    "textures": { 
+        "layer0": "ic2universalenergy:item/hdpe_elytra"
+    },
+    "overrides": [
+        {
+            "predicate": {
+                "ic2universalenergy:broken": 1
+            },
+            "model": "ic2universalenergy:item/hdpe_broken_elytra"
+        }
+    ]
+}

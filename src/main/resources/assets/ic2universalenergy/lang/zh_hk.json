@@ -1,0 +1,10 @@
+{
+  "assemblicator.ic2universalenergy.auto_mode_toggle": "自動模式：%1$s",
+  "assemblicator.ic2universalenergy.craft_available": "可合成物品",
+  "assemblicator.ic2universalenergy.craft_single": "合成單個物品",
+  "auto.ic2universalenergy.eject": "自動放射",
+  "auto.ic2universalenergy.pull": "自動牽拉",
+  "auto.ic2universalenergy.sort": "自動整理",
+  "block.ic2universalenergy.advanced_bin": "高級儲物箱",
+  "block.ic2universalenergy.advanced_chemical_tank": "高級化學品罐"
+}

@@ -1,0 +1,19 @@
+{
+  "variants": {
+    "facing=north": {
+      "model": "ic2universalenergy:block/chemical_crystallizer"
+    },
+    "facing=south": {
+      "model": "ic2universalenergy:block/chemical_crystallizer",
+      "y": 180
+    },
+    "facing=east": {
+      "model": "ic2universalenergy:block/chemical_crystallizer",
+      "y": 90
+    },
+    "facing=west": {
+      "model": "ic2universalenergy:block/chemical_crystallizer",
+      "y": -90
+    }
+  }
+}

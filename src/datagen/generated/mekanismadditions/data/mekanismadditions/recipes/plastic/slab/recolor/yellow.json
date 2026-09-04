@@ -1,0 +1,27 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "building",
+  "key": {
+    "#": {
+      "type": "forge:difference",
+      "base": {
+        "tag": "forge:slabs/plastic"
+      },
+      "subtracted": {
+        "item": "mekanismadditions:yellow_plastic_slab"
+      }
+    },
+    "D": {
+      "tag": "forge:dyes/yellow"
+    }
+  },
+  "pattern": [
+    " # ",
+    "#D#",
+    " # "
+  ],
+  "result": {
+    "count": 4,
+    "item": "mekanismadditions:yellow_plastic_slab"
+  }
+}

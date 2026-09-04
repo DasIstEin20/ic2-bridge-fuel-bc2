@@ -1,0 +1,20 @@
+{
+    "ctm": {
+        "ctm_version": 1,
+        "type": "CTM",
+        "layer": "SOLID",
+        "textures": [
+            "ic2universalenergy:ctm/sps_port"
+        ],
+        "extra": {
+            "connect_to": [
+                {
+                    "block": "ic2universalenergy:sps_casing"
+                },
+                {
+                    "block": "ic2universalenergy:sps_port"
+                }
+            ]
+        }
+    }
+}

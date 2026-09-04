@@ -1,0 +1,7 @@
+{
+  "parent": "ic2universalenergy:block/machine",
+  "textures": {
+    "sides": "ic2universalenergy:block/thermal_evaporation_block",
+    "front": "ic2universalenergy:block/thermal_evaporation_controller"
+  }
+}

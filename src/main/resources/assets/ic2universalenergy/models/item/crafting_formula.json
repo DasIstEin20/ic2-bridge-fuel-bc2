@@ -1,0 +1,20 @@
+{
+    "parent": "minecraft:item/generated",
+    "textures": { 
+        "layer0": "ic2universalenergy:item/crafting_formula"
+    },
+    "overrides": [
+        {
+            "predicate": {
+                "ic2universalenergy:invalid": 1
+            },
+            "model": "ic2universalenergy:item/crafting_formula_invalid"
+        },
+        {
+            "predicate": {
+                "ic2universalenergy:encoded": 1
+            },
+            "model": "ic2universalenergy:item/crafting_formula_encoded"
+        }
+    ]
+}

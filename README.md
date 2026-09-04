@@ -1,168 +1,91 @@
-# BuildCraft x IC2 Bridge
+<p align="center">
+  <img src="logo.png" alt="IC2 Universal Energy Extension logo" width="320">
+</p>
 
-Compatibility layer for BuildCraft Community Edition, Forestry, and IC2 on Minecraft Forge 1.20.1. The repository name remains `ic2-bridge-fuel-bc2` for continuity, but the in-game name is **BuildCraft x IC2 Bridge**.
+# IC2 Universal Energy Extension
 
-## BuildCraft compatibility (0.3.0)
+**IC2 Universal Energy Extension** is a Forge 1.20.1 addon that connects IndustrialCraft 2 EU networks to Forge Energy machines through full-featured Universal Cables. The project started as `ic2-bridge-fuel-bc2`, a focused IC2/BuildCraft fuel and energy bridge, and grew into a broader energy-integration addon with selected Mekanism transmitter systems and the Configurator.
 
-BuildCraft is optional and has no hard minimum version in `mods.toml`. The bridge does not stop Forge from loading just because a BuildCraft fork reports an older, newer, or unfamiliar version.
+## In game
 
-At runtime `BuildCraftCompatibilityResolver` probes public API features first: the `IMjReceiver` capability, a usable combustion-fuel registry, and BuildCraft fluids in Forge's registry. A version string is diagnostic only. The resolver labels verified CE 8.x and CE 7.99.x APIs when their features are present; an unfamiliar release receives the **Generic / BEST_EFFORT** reflection and registry fallback.
+![An IC2 MFSU powering a Refined Storage network through Universal Cables](docs/images/mfsu-universal-cable-refined-storage.png)
 
-Energy, BuildCraft → IC2 fuels, IC2 → BuildCraft fuels, and fluid discovery are independent capabilities. If one API is absent, the other working capabilities remain enabled and Forge startup continues. The in-game **Compatibility** page reports the selected BuildCraft module ID and version, adapter, mode, and the status of every capability.
+*An IC2 MFSU powering a Refined Storage controller through a Universal Cable network. Energy enters the cable as EU, is converted at the boundary, and is transported as FE.*
 
-## Modules
+## What it provides
 
-### Energy Bridge — IC2 → BuildCraft
+- Universal Cables in Basic, Advanced, Elite, and Ultimate tiers.
+- Mechanical Pipes, Pressurized Tubes, Logistical Transporters, Restrictive and Diversion Transporters, and Thermodynamic Conductors with their original tiers and behavior.
+- Mekanism-derived transmitter networking, side configuration, NBT, packets, rendering, textures, models, overlays, and Configurator behavior.
+- IC2 EU to Forge Energy conversion for receiving `IEnergyStorage` implementations, including Refined Storage and other FE machines.
+- Demand-aware EU intake: when downstream FE consumers stop accepting energy, the cable endpoint stops requesting EU instead of voiding it.
+- IC2 EU ↔ BuildCraft MJ conversion.
+- BuildCraft fuel ↔ IC2 Semifluid Generator integration.
+- Forestry FE → IC2 support and generic IC2 → Forestry FE delivery.
+- Crafting recipes based on IC2 materials.
+- English and Polish configuration UI.
 
-The bridge discovers BuildCraft's public `IMjReceiver` capability and registers an IC2 EnergyNet sink for each receiver block entity. It therefore covers every current and future BuildCraft MJ consumer through the same integration point; there are no Quarry-, Mining Well-, or machine-specific adapters.
+## EU through Universal Cables
 
-Connect an IC2 cable/emitter directly to a BuildCraft block that receives MJ. The bridge accepts EU from IC2 and inserts the corresponding micro-MJ into the receiver. The transfer is global ON/OFF and can either honor the receiver's own request (`AUTO`) or apply a per-receiver EU/t cap (`MANUAL`).
-
-The bridge also contributes BuildCraft CE's common MJ endpoint blocks to IC2's `forge:cable_connectable` tag. This is a client-visible compatibility detail: IC2 cable arms now extend flush to the machine face instead of visually stopping short. It includes BC engines, Quarry, Builder, Filler, Mining Well, Distiller, Chute, and Laser; the actual power bridge still discovers compatible capabilities dynamically.
-
-### Energy Bridge — BuildCraft → IC2
-
-The bridge discovers BuildCraft's public `IMjPassiveProvider` capability and registers an IC2 EnergyNet source for every provider block entity. Connect the producer's output face to an IC2 cable; the available micro-MJ are converted to EU with the same central ratio and delivered through the normal IC2 grid, so IC2 cable voltage and transformer rules still apply.
-
-Both energy directions can be enabled independently. The shared transfer limit follows the BuildCraft endpoint's requested/offered rate in `AUTO`, or caps each bridged endpoint in EU/t in `MANUAL`.
-
-### Energy Bridge — IC2 → Forge Energy
-
-IC2 emitters and cables can power every non-IC2 block entity that exposes a receiving Forge Energy (`IEnergyStorage`) capability. The bridge is capability-based rather than tied to a fixed mod list, so it includes current FE machines such as **Refined Storage**, Forestry receivers, and future compatible mods.
-
-`energy.ic2ToForgeEnergyEnabled` enables this direction. `energy.forgeEnergyPerEu` controls the conversion; the default is **4 FE per EU**. The existing `AUTO`/`MANUAL` transfer limit also caps each FE endpoint in EU/t. The bridge intentionally does not turn arbitrary FE producers into IC2 sources; Forestry's explicit FE → IC2 support remains available separately.
-
-### BuildCraft transport pipes ↔ IC2 machines
-
-BuildCraft CE transport already uses Forge's common capabilities, which IC2 1.20.1 implements directly. No lossy proxy or per-machine conversion is needed:
-
-- fluid pipes use `ForgeCapabilities.FLUID_HANDLER`, so they can fill and drain IC2 tanks, generators, and fluid machines from their enabled sides;
-- item pipes use `ForgeCapabilities.ITEM_HANDLER`, so they can insert into and extract from IC2 inventories according to IC2's slot-side rules;
-- power pipes are covered by the MJ ↔ IC2 energy bridge above when their pipe definition exposes an `IMjReceiver` endpoint;
-- structure pipes do not carry fluids, items, or energy in BuildCraft itself and therefore have no transport capability to bridge.
-
-`buildcrafttransport` is declared as an optional dependency so the bridge is ordered after the Transport module when it is installed. Do not use the IC2 cable-connectable tag for a generic pipe holder: one holder can contain a fluid or item pipe, so marking all of them as electrical endpoints would create false cable connections.
-
-### Energy Bridge — Forestry ↔ IC2
-
-Forestry 2.10.2 exposes its machines and engines through Forge Energy (`IEnergyStorage`). When Forestry is installed, its receiving machines use the generic IC2 → Forge Energy bridge above, while Forestry engines additionally expose their output as an IC2 EnergyNet source:
-
-- Forestry → IC2: Forestry engines expose their FE output as an IC2 EnergyNet source.
-
-The adapter respects the side on which the FE capability is exposed, so an engine keeps using its configured output face. The shared FE/EU conversion and IC2 transfer limit are also respected.
-
-### Fuel Bridge — BuildCraft → IC2
-
-BuildCraft CE combustion fluids are registered as IC2 Semifluid Generator fuels with their individual BuildCraft energy densities. The bridge also supplies filled IC2 cells for the standard CE fluids.
-
-### Fuel Bridge — IC2 → BuildCraft
-
-Accepted IC2 Semifluid Generator fuels are imported into BuildCraft's shared combustion-fuel registry. By default only `ic2` namespace fluids are imported, which currently makes IC2 biogas available to BuildCraft combustion engines. The automatic source, namespace filters, burn time, and exact overrides are configurable.
-
-## One conversion authority
-
-`EnergyConversionService` is the only energy-conversion layer. The BuildCraft energy and fuel bridges use one EU ↔ MJ ratio:
+Use this topology:
 
 ```text
-AUTO   2.5 EU / MJ
-MANUAL configured manualEuPerBuildCraftMj
+IC2 generator/storage -> IC2 cable -> Universal Cable network -> FE machine
 ```
 
-`AUTO` deliberately has a visible, stable default. Switch to `MANUAL` for a pack-specific ratio; the setting affects subsequent fuel registration after a restart as well as live energy transfers in both directions.
+Each receiving Universal Cable endpoint is exposed to IC2's EnergyNet as a sink. Accepted EU is converted at the boundary by the shared `EnergyConversionService`, then inserted through the cable's Forge Energy capability. The cable network therefore carries FE and retains the original tier limits, routing, rendering, and transfer behavior.
 
-Forge Energy uses its own FE/EU setting; its default is `4.0 FE/EU`.
+The bridge applies downstream demand and backpressure before requesting EU. A full or missing FE consumer closes the input, while queued converted energy remains accounted for rather than disappearing. Direct IC2-cable-to-FE-machine connections remain supported as well.
 
-## Configuration and UI
+Refined Storage integration is capability-based: no Refined Storage classes are bundled or linked. Any machine exposing a receiving `ForgeCapabilities.ENERGY` endpoint can use the same path.
 
-All settings are Forge **server config** values:
+## Conversion configuration
+
+The server configuration is stored per world at:
 
 ```text
-<world>/serverconfig/bcic2fuelbridge-server.toml
+<world>/serverconfig/ic2universalenergy-server.toml
 ```
 
-In an integrated server, open **Mods → BuildCraft x IC2 Bridge → Config**. On a dedicated server the synchronized screen is read-only; edit `serverconfig` as an administrator. The screen has categories for Energy, both fuel directions, individual profiles, Balance, Overrides, Discovery, and Compatibility.
+`forgeEnergyPerEu` means **how many FE one EU produces**. Its default is `4.0`:
 
-English (`en_us`) and Polish (`pl_pl`) category/title translations are shipped. The Energy fields include tooltips explaining AUTO/MANUAL behavior.
+| Value | Result |
+| ---: | :--- |
+| `0.2` | 5 EU produces 1 FE |
+| `4.0` | 1 EU produces 4 FE |
+| `20.0` | 1 EU produces 20 FE |
 
-Important server-config sections:
+A higher value therefore consumes less EU for the same FE demand. BuildCraft uses the existing automatic `2.5 EU/MJ` ratio unless manual conversion is selected. Transfer limits and fuel-bridge settings are available from the Forge Mods configuration screen.
 
-```toml
-[energy]
-    ic2ToBuildCraftEnabled = true
-    buildCraftToIc2Enabled = true
-    ic2ToForgeEnergyEnabled = true
-    forestryToIc2Enabled = true
-    forgeEnergyPerEu = 4.0
-    conversionMode = "AUTO"
-    manualEuPerBuildCraftMj = 2.5
-    transferLimitMode = "AUTO"
-    manualTransferLimitEuPerTick = 128.0
-
-[fuels.buildCraftToIc2]
-    enabled = true
-
-[fuels.ic2ToBuildCraft]
-    enabled = true
-    autoDiscovery = true
-    namespaceTokens = ["ic2"]
-    burnTimeTicks = 10
-```
-
-### Exact fuel overrides
-
-`fuels.buildCraftToIc2.overrides.customFuelRules` uses:
-
-```text
-fluid_id;energy_EU;reference_volume_mB;cycle_mB
-```
-
-`fuels.ic2ToBuildCraft.customFuelRules` uses:
-
-```text
-fluid_id;energy_EU_per_mB;burn_time_ticks
-```
-
-Exact rules take priority over automatic discovery. Restart the server after changing either fuel direction because existing IC2/BuildCraft fuel registry entries cannot safely be replaced while a world is running.
-
-## Screenshots
-
-### Configuration screen
-
-| Energy | BuildCraft → IC2 |
-| --- | --- |
-| [![Energy settings](docs/screenshots/01-energy.png)](docs/screenshots/01-energy.png) | [![BuildCraft to IC2 settings](docs/screenshots/02-bc-to-ic2.png)](docs/screenshots/02-bc-to-ic2.png) |
-| Fuel profiles | IC2 → BuildCraft |
-| [![Fuel profile settings](docs/screenshots/03-fuel-profiles.png)](docs/screenshots/03-fuel-profiles.png) | [![IC2 to BuildCraft settings](docs/screenshots/04-ic2-to-bc.png)](docs/screenshots/04-ic2-to-bc.png) |
-| Balance | Overrides |
-| [![Balance settings](docs/screenshots/05-balance.png)](docs/screenshots/05-balance.png) | [![Fuel override settings](docs/screenshots/06-overrides.png)](docs/screenshots/06-overrides.png) |
-| Discovery | Compatibility |
-| [![Discovery settings](docs/screenshots/07-discovery.png)](docs/screenshots/07-discovery.png) | [![Compatibility information](docs/screenshots/08-compatibility.png)](docs/screenshots/08-compatibility.png) |
-
-### In-game fuel bridge
-
-[![Dense Oil registered in the IC2 Semifluid Generator](docs/screenshots/09-semifluid-generator.png)](docs/screenshots/09-semifluid-generator.png)
-
-## Requirements
+## Requirements and compatibility
 
 - Minecraft 1.20.1
-- Forge 47.x
-- IC2 for Forge 1.20.1
-- BuildCraft is optional; BuildCraft CE 7.99.25.0 and CE 8.x are recognized when their public APIs are present. Other releases are attempted in BEST_EFFORT mode.
+- Forge 47.4.23 or a compatible Forge 47 build
+- IndustrialCraft 2: Refactored `2.10.33-ex120`
+- BuildCraft, Forestry, and Refined Storage are optional integrations
+
+This is a **Forge** mod, not a NeoForge mod.
+
+Remove the old standalone `bcic2fuelbridge` and `transporter` JARs before installing the combined addon. The resulting JAR owns the extracted `mekanism.*` transmitter classes, so it must not be installed alongside full Mekanism 10.4.x.
 
 ## Build
 
-```text
-gradlew.bat build
+Use Java 17 and keep Gradle data on drive R:, for example:
+
+```powershell
+$env:GRADLE_USER_HOME = 'R:\Codex-misc\ic2 mods\ic2-bridge-fuel-bc2\.gradle-user-home'
+.\gradlew.bat build --no-daemon
 ```
 
-## Release artifact
+The primary artifact is named `IC2-Universal-Energy-Extension-1.20.1-<version>.jar`.
 
-The ready-to-install build for this source revision is included as
-[`releases/bcic2fuelbridge-0.2.3.jar`](releases/bcic2fuelbridge-0.2.3.jar).
-Place that single JAR in the instance's `mods` directory together with IC2 and,
-optionally, BuildCraft. Remove older copies of the bridge first so Forge does
-not load two versions of the same mod.
+## History, source, and license
 
-## License
+This repository began as [DasIstEin20/ic2-bridge-fuel-bc2](https://github.com/DasIstEin20/ic2-bridge-fuel-bc2), which bridged IC2 with BuildCraft fuels and energy. It has since evolved into IC2 Universal Energy Extension: a single addon combining those bridges with EU/FE conversion and cable-based distribution.
 
-MIT — see [LICENSE](LICENSE).
+Selected transmitter and Configurator code, rendering logic, models, textures, and related assets are copied or adapted from Mekanism 10.4.16 in accordance with its MIT License. The original Mekanism copyright notice is retained in this project's `LICENSE`.
+
+- [Mekanism on CurseForge](https://www.curseforge.com/minecraft/mc-mods/mekanism)
+- [Mekanism source code](https://github.com/mekanism/Mekanism)
+
+This project is distributed under the MIT License. See [`LICENSE`](LICENSE) for the complete notices and terms.

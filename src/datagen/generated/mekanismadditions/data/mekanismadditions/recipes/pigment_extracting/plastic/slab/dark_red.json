@@ -1,0 +1,12 @@
+{
+  "type": "mekanism:pigment_extracting",
+  "input": {
+    "ingredient": {
+      "item": "mekanismadditions:dark_red_plastic_slab"
+    }
+  },
+  "output": {
+    "amount": 24,
+    "pigment": "mekanism:dark_red"
+  }
+}

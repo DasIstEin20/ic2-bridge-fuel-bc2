@@ -1,0 +1,12 @@
+{
+  "parent": "ic2universalenergy:block/machine",
+  "textures": {
+    "sides": "ic2universalenergy:block/enrichment_chamber/right",
+    "front": "ic2universalenergy:block/enrichment_chamber/front",
+    "west": "ic2universalenergy:block/enrichment_chamber/right",
+    "east": "ic2universalenergy:block/enrichment_chamber/left",
+    "south": "ic2universalenergy:block/enrichment_chamber/back",
+    "up": "ic2universalenergy:block/enrichment_chamber/top",
+    "down": "ic2universalenergy:block/enrichment_chamber/bottom"
+  }
+}

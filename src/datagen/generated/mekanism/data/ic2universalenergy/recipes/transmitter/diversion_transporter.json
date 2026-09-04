@@ -1,0 +1,23 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "key": {
+    "#": {
+      "item": "ic2:advanced_circuit"
+    },
+    "R": {
+      "item": "ic2:circuit"
+    },
+    "S": {
+      "item": "ic2:steel_plate"
+    }
+  },
+  "pattern": [
+    "RRR",
+    "S#S",
+    "RRR"
+  ],
+  "result": {
+    "count": 2,
+    "item": "ic2universalenergy:diversion_transporter"
+  }
+}

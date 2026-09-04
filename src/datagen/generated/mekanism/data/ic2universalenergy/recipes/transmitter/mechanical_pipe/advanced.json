@@ -1,0 +1,20 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "key": {
+    "A": {
+      "tag": "ic2universalenergy:alloys/infused"
+    },
+    "P": {
+      "item": "ic2universalenergy:basic_mechanical_pipe"
+    }
+  },
+  "pattern": [
+    "PPP",
+    "PAP",
+    "PPP"
+  ],
+  "result": {
+    "count": 8,
+    "item": "ic2universalenergy:advanced_mechanical_pipe"
+  }
+}

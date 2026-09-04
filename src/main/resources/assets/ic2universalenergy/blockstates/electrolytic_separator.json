@@ -1,0 +1,19 @@
+{
+  "variants": {
+    "facing=north": {
+      "model": "ic2universalenergy:block/electrolytic_separator",
+      "y": 90
+    },
+    "facing=south": {
+      "model": "ic2universalenergy:block/electrolytic_separator",
+      "y": -90
+    },
+    "facing=east": {
+      "model": "ic2universalenergy:block/electrolytic_separator",
+      "y": 180
+    },
+    "facing=west": {
+      "model": "ic2universalenergy:block/electrolytic_separator"
+    }
+  }
+}

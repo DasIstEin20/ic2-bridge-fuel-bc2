@@ -1,0 +1,15 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "key": {
+    "#": { "item": "ic2:rubber" },
+    "A": { "item": "ic2:alloy" },
+    "E": { "item": "ic2:re_battery" },
+    "I": { "item": "ic2:frequency_transmitter" }
+  },
+  "pattern": [
+    " I ",
+    "AEA",
+    " # "
+  ],
+  "result": { "item": "ic2universalenergy:configurator" }
+}

@@ -1,0 +1,12 @@
+{
+  "parent": "ic2universalenergy:block/machine",
+  "textures": {
+    "sides": "ic2universalenergy:block/energized_smelter/side",
+    "front": "ic2universalenergy:block/energized_smelter/front",
+    "west": "ic2universalenergy:block/energized_smelter/side",
+    "east": "ic2universalenergy:block/energized_smelter/side",
+    "south": "ic2universalenergy:block/energized_smelter/back",
+    "up": "ic2universalenergy:block/energized_smelter/top",
+    "down": "ic2universalenergy:block/energized_smelter/bottom"
+  }
+}

@@ -1,0 +1,18 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "key": {
+    "#": {
+      "item": "ic2:circuit"
+    },
+    "S": {
+      "item": "ic2:steel_plate"
+    }
+  },
+  "pattern": [
+    "S#S"
+  ],
+  "result": {
+    "count": 8,
+    "item": "ic2universalenergy:basic_logistical_transporter"
+  }
+}

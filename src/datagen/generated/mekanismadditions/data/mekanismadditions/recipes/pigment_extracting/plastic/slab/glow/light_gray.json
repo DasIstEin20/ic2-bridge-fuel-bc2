@@ -1,0 +1,12 @@
+{
+  "type": "mekanism:pigment_extracting",
+  "input": {
+    "ingredient": {
+      "item": "mekanismadditions:light_gray_plastic_glow_slab"
+    }
+  },
+  "output": {
+    "amount": 21,
+    "pigment": "mekanism:light_gray"
+  }
+}

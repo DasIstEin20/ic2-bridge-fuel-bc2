@@ -1,0 +1,18 @@
+{
+  "assemblicator.ic2universalenergy.craft_available": "Utform Tilgjenglege Gjenstandar",
+  "assemblicator.ic2universalenergy.craft_single": "Utform Enkelt Gjenstand",
+  "auto.ic2universalenergy.eject": "Auto-utløys",
+  "auto.ic2universalenergy.pull": "Auto-trekk",
+  "auto.ic2universalenergy.sort": "Auto-sortér",
+  "block.ic2universalenergy.advanced_bin": "Avansert binge",
+  "block.ic2universalenergy.advanced_combining_factory": "Avansert kombineringfabrikk",
+  "block.ic2universalenergy.advanced_compressing_factory": "Avansert kompresjonfabrikk",
+  "block.ic2universalenergy.advanced_crushing_factory": "Avansert knusefabrikk",
+  "block.ic2universalenergy.advanced_energy_cube": "Avansert energikube",
+  "container.ic2universalenergy.advanced_combining_factory": "Avansert kombineringfabrikk",
+  "container.ic2universalenergy.advanced_compressing_factory": "Avansert kompresjonfabrikk",
+  "container.ic2universalenergy.advanced_crushing_factory": "Avansert knusefabrikk",
+  "container.ic2universalenergy.advanced_energy_cube": "Avansert energikube",
+  "key.ic2universalenergy.description": "Show description",
+  "key.ic2universalenergy.details": "Show details"
+}

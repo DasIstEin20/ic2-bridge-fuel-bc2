@@ -1,0 +1,9 @@
+{
+  "parent": "ic2universalenergy:block/transmitter/small/small",
+  "textures": {
+    "side": "ic2universalenergy:block/models/multipart/basic_thermodynamic_conductor_vertical",
+    "center_down": "ic2universalenergy:block/models/multipart/basic_thermodynamic_conductor",
+    "side_opaque": "ic2universalenergy:block/models/multipart/opaque/basic_thermodynamic_conductor_vertical",
+    "center_opaque": "ic2universalenergy:block/models/multipart/basic_thermodynamic_conductor"
+  }
+}

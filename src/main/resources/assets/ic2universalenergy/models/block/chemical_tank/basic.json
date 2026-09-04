@@ -1,0 +1,6 @@
+{
+  "parent": "ic2universalenergy:block/chemical_tank/base",
+  "textures": {
+    "valve": "ic2universalenergy:block/models/chemical_tank_basic_valve"
+  }
+}

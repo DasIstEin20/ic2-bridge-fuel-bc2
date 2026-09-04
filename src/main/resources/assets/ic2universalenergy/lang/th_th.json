@@ -1,0 +1,10 @@
+{
+  "assemblicator.ic2universalenergy.craft_available": "ไอเทมที่สามารถสร้างได้",
+  "assemblicator.ic2universalenergy.craft_single": "สร้างเพียงไอเทมเดียว",
+  "auto.ic2universalenergy.eject": "นำออกอัตโนมัติ",
+  "auto.ic2universalenergy.pull": "นำเข้าอัตโนมัติ",
+  "auto.ic2universalenergy.sort": "จัดเรียงอัตโนมัติ",
+  "block.ic2universalenergy.block_charcoal": "บล็อกถ่าน",
+  "key.ic2universalenergy.description": "Show description",
+  "key.ic2universalenergy.details": "Show details"
+}

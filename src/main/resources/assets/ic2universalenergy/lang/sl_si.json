@@ -1,0 +1,16 @@
+{
+  "block.ic2universalenergy.advanced_chemical_tank": "Napredni kemijski rezervoar",
+  "block.ic2universalenergy.antiprotonic_nucleosynthesizer": "Antiprotonska nukleosinteza",
+  "block.ic2universalenergy.basic_chemical_tank": "Osnovni kemijski rezervoar",
+  "block.ic2universalenergy.block_lead": "Kocka svinca",
+  "block.ic2universalenergy.block_uranium": "Kocka urana",
+  "block.ic2universalenergy.elite_chemical_tank": "Elitni kemijski rezervoar",
+  "block.ic2universalenergy.hydrofluoric_acid": "Tekoča fluorovodikova kislina",
+  "block.ic2universalenergy.industrial_alarm": "Industrijski alarm",
+  "block.ic2universalenergy.lead_ore": "Svinčena ruda",
+  "block.ic2universalenergy.radioactive_waste_barrel": "Sod za radioaktivne odpadke",
+  "block.ic2universalenergy.uranium_ore": "Uranova ruda",
+  "boiler.ic2universalenergy.coolant_tank": "Rezervoar Hladila",
+  "key.ic2universalenergy.description": "Show description",
+  "key.ic2universalenergy.details": "Show details"
+}

@@ -1,0 +1,8 @@
+{
+	"parent": "ic2universalenergy:block/laser_cube_base",
+	"textures": {
+		"frame": "ic2universalenergy:block/models/laser_device_frame",
+		"side_empty": "ic2universalenergy:block/models/laser_amplifier_side_empty",
+		"side_full": "ic2universalenergy:block/models/laser_amplifier_side_full"
+	}
+}

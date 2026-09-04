@@ -1,0 +1,21 @@
+{
+  "type": "mekanism:painting",
+  "chemicalInput": {
+    "amount": 64,
+    "pigment": "mekanism:aqua"
+  },
+  "itemInput": {
+    "ingredient": {
+      "type": "forge:difference",
+      "base": {
+        "tag": "mekanismadditions:plastic_blocks/plastic"
+      },
+      "subtracted": {
+        "item": "mekanismadditions:aqua_plastic"
+      }
+    }
+  },
+  "output": {
+    "item": "mekanismadditions:aqua_plastic"
+  }
+}

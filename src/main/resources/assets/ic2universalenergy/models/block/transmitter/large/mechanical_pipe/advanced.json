@@ -1,0 +1,9 @@
+{
+  "parent": "ic2universalenergy:block/transmitter/large/large",
+  "textures": {
+    "side": "ic2universalenergy:block/models/multipart/advanced_mechanical_pipe_vertical",
+    "center_down": "ic2universalenergy:block/models/multipart/advanced_mechanical_pipe",
+    "side_opaque": "ic2universalenergy:block/models/multipart/opaque/advanced_mechanical_pipe_vertical",
+    "center_opaque": "ic2universalenergy:block/models/multipart/opaque/advanced_mechanical_pipe"
+  }
+}

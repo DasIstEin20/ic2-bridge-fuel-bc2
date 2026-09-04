@@ -1,0 +1,7 @@
+{
+    "parent": "minecraft:item/generated",
+    "textures": { 
+        "layer0": "ic2universalenergy:item/mekasuit_boots",
+        "layer1": "ic2universalenergy:item/mekasuit_boots_tint_layer"
+    }
+}

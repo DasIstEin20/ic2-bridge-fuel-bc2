@@ -1,0 +1,11 @@
+{
+    "parent": "ic2universalenergy:block/bin/base",
+    "textures": {
+        "led": "ic2universalenergy:block/bin/basic_led",
+        "front": "ic2universalenergy:block/bin/front",
+        "side": "ic2universalenergy:block/bin/side",
+        "top": "ic2universalenergy:block/bin/top",
+        "back": "ic2universalenergy:block/bin/back",
+        "bottom": "ic2universalenergy:block/bin/bottom"
+    }
+}

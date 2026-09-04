@@ -1,0 +1,10 @@
+{
+  "variants": {
+    "active=false": {
+      "model": "ic2universalenergy:block/superheating_element"
+    },
+    "active=true": {
+      "model": "ic2universalenergy:block/superheating_element_active"
+    }
+  }
+}

@@ -1,0 +1,6 @@
+{
+  "parent": "ic2universalenergy:block/personal_barrel",
+  "textures": {
+    "top": "ic2universalenergy:block/personal_barrel/top_open"
+  }
+}

@@ -1,0 +1,10 @@
+{
+    "render_type": "minecraft:cutout",
+    "parent": "ic2universalenergy:block/induction/cell/base",
+    "textures": {
+        "particle": "ic2universalenergy:block/basic_induction_cell",
+        "all": "ic2universalenergy:block/basic_induction_cell",
+        "glow": "ic2universalenergy:block/induction_cell_glow",
+        "led": "ic2universalenergy:block/induction_cell_led"
+    }
+}

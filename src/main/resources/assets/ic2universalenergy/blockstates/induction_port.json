@@ -1,0 +1,10 @@
+{
+  "variants": {
+    "active=false": {
+      "model": "ic2universalenergy:block/induction/port"
+    },
+    "active=true": {
+      "model": "ic2universalenergy:block/induction/port_output"
+    }
+  }
+}

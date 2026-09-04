@@ -1,0 +1,6 @@
+{
+	"parent": "ic2universalenergy:block/fluid_tank_base",
+	"textures": {
+		"glass": "ic2universalenergy:block/models/fluid_tank_side_off"
+	}
+}

@@ -1,0 +1,19 @@
+{
+  "variants": {
+    "facing=north": {
+      "model": "ic2universalenergy:block/modification_station"
+    },
+    "facing=south": {
+      "model": "ic2universalenergy:block/modification_station",
+      "y": 180
+    },
+    "facing=east": {
+      "model": "ic2universalenergy:block/modification_station",
+      "y": 90
+    },
+    "facing=west": {
+      "model": "ic2universalenergy:block/modification_station",
+      "y": -90
+    }
+  }
+}

@@ -1,0 +1,27 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "building",
+  "key": {
+    "#": {
+      "type": "forge:difference",
+      "base": {
+        "tag": "forge:stairs/plastic/transparent"
+      },
+      "subtracted": {
+        "item": "mekanismadditions:gray_plastic_transparent_stairs"
+      }
+    },
+    "D": {
+      "tag": "forge:dyes/gray"
+    }
+  },
+  "pattern": [
+    "###",
+    "#D#",
+    "###"
+  ],
+  "result": {
+    "count": 8,
+    "item": "mekanismadditions:gray_plastic_transparent_stairs"
+  }
+}
