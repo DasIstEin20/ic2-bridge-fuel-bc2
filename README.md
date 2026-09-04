@@ -39,6 +39,45 @@ The bridge applies downstream demand and backpressure before requesting EU. A fu
 
 Refined Storage integration is capability-based: no Refined Storage classes are bundled or linked. Any machine exposing a receiving `ForgeCapabilities.ENERGY` endpoint can use the same path.
 
+## Energy integrations
+
+### IC2 → BuildCraft MJ
+
+The bridge discovers BuildCraft's public `IMjReceiver` capability and exposes each receiver block entity to the IC2 EnergyNet as a sink. Connect an IC2 cable or emitter directly to a compatible BuildCraft endpoint; accepted EU is converted to micro-MJ and inserted into the receiver. This is capability-based rather than hardcoded for individual machines, so it covers endpoints such as the Quarry, Mining Well, Builder, Filler, Distiller, Chute, Laser, and compatible engines.
+
+The known BuildCraft endpoints are also included in IC2's `forge:cable_connectable` tag so IC2 cable arms visually meet the machine face. In `AUTO` mode the bridge follows the receiver's request; `MANUAL` mode applies the configured per-endpoint EU/t limit.
+
+### BuildCraft MJ → IC2
+
+BuildCraft blocks exposing `IMjPassiveProvider` are registered as IC2 EnergyNet sources. Their offered micro-MJ is converted to EU and delivered through the normal IC2 grid, preserving IC2 cable voltage, tier, and transformer rules. Both BuildCraft energy directions can be enabled independently.
+
+### Forestry ↔ IC2
+
+Forestry machines that receive FE are handled by the generic IC2 → FE bridge. Forestry engines additionally expose their FE output as an IC2 EnergyNet source. The adapter respects the side on which Forestry exposes the energy capability and uses the shared FE/EU conversion and transfer-limit settings.
+
+### BuildCraft transport pipes ↔ IC2 machines
+
+BuildCraft transport uses Forge capabilities that IC2 1.20.1 exposes directly:
+
+- fluid pipes use `ForgeCapabilities.FLUID_HANDLER` to fill and drain IC2 tanks and fluid machines from valid sides;
+- item pipes use `ForgeCapabilities.ITEM_HANDLER` and retain IC2's slot-side rules;
+- power pipes are handled when their endpoint exposes an `IMjReceiver`;
+- structure pipes do not transport items, fluids, or energy and therefore require no bridge.
+
+## Fuel integrations
+
+### BuildCraft fuels → IC2
+
+BuildCraft CE combustion fluids are registered as IC2 Semifluid Generator fuels. Known CE fuels retain their individual BuildCraft energy densities and have configurable per-fuel `AUTO`/`MANUAL` profiles. The addon also provides filled IC2-style cells for the standard oil and fuel variants.
+
+Automatic discovery can register additional oil/fuel fluids by registry namespace and path. Pack authors can change the namespace filters, generic oil and fuel energy values, cycle sizes, the global energy multiplier, or supply exact rules for any fluid.
+
+### IC2 fuels → BuildCraft
+
+Accepted IC2 Semifluid Generator fuels can be imported into BuildCraft's combustion-fuel registry. Automatic discovery defaults to the `ic2` namespace, making fuels such as IC2 biogas available to compatible BuildCraft combustion engines. Namespace filters, burn time, automatic discovery, and exact per-fluid overrides are configurable.
+
+The two fuel directions are independent. If one BuildCraft API feature is unavailable, the remaining energy, fuel, and fluid integrations stay enabled whenever their required capabilities are present. `BuildCraftCompatibilityResolver` probes the installed public APIs and registries instead of rejecting an unfamiliar BuildCraft version solely by its version string; the in-game **Compatibility** page reports every detected feature.
+
 ## Conversion configuration
 
 The server configuration is stored per world at:
@@ -56,6 +95,67 @@ The server configuration is stored per world at:
 | `20.0` | 1 EU produces 20 FE |
 
 A higher value therefore consumes less EU for the same FE demand. BuildCraft uses the existing automatic `2.5 EU/MJ` ratio unless manual conversion is selected. Transfer limits and fuel-bridge settings are available from the Forge Mods configuration screen.
+
+`EnergyConversionService` is the single conversion authority shared by the live BuildCraft energy bridges and both fuel-registration directions:
+
+```text
+AUTO   2.5 EU / MJ
+MANUAL configured manualEuPerBuildCraftMj
+```
+
+The most important server-config sections are:
+
+```toml
+[energy]
+    ic2ToBuildCraftEnabled = true
+    buildCraftToIc2Enabled = true
+    ic2ToForgeEnergyEnabled = true
+    forestryToIc2Enabled = true
+    forgeEnergyPerEu = 4.0
+    conversionMode = "AUTO"
+    manualEuPerBuildCraftMj = 2.5
+    transferLimitMode = "AUTO"
+    manualTransferLimitEuPerTick = 128.0
+
+[fuels.buildCraftToIc2]
+    enabled = true
+
+[fuels.ic2ToBuildCraft]
+    enabled = true
+    autoDiscovery = true
+    namespaceTokens = ["ic2"]
+    burnTimeTicks = 10
+```
+
+Exact BuildCraft → IC2 fuel rules use:
+
+```text
+namespace:path;energyEuPerReferenceUnit;referenceUnitVolumeMb;cycleAmountMb
+```
+
+Exact IC2 → BuildCraft rules use:
+
+```text
+namespace:path;energyEuPerMb;burnTimeTicks
+```
+
+Exact rules take priority over automatic discovery. Restart the server after changing fuel registration because IC2 and BuildCraft fuel registry entries cannot be replaced safely while a world is running.
+
+### Configuration screens
+
+| Energy | BuildCraft → IC2 |
+| --- | --- |
+| [![Energy settings](docs/screenshots/01-energy.png)](docs/screenshots/01-energy.png) | [![BuildCraft to IC2 settings](docs/screenshots/02-bc-to-ic2.png)](docs/screenshots/02-bc-to-ic2.png) |
+| Fuel profiles | IC2 → BuildCraft |
+| [![Fuel profile settings](docs/screenshots/03-fuel-profiles.png)](docs/screenshots/03-fuel-profiles.png) | [![IC2 to BuildCraft settings](docs/screenshots/04-ic2-to-bc.png)](docs/screenshots/04-ic2-to-bc.png) |
+| Balance | Overrides |
+| [![Balance settings](docs/screenshots/05-balance.png)](docs/screenshots/05-balance.png) | [![Fuel override settings](docs/screenshots/06-overrides.png)](docs/screenshots/06-overrides.png) |
+| Discovery | Compatibility |
+| [![Discovery settings](docs/screenshots/07-discovery.png)](docs/screenshots/07-discovery.png) | [![Compatibility information](docs/screenshots/08-compatibility.png)](docs/screenshots/08-compatibility.png) |
+
+### Fuel bridge in game
+
+[![Dense Oil registered in the IC2 Semifluid Generator](docs/screenshots/09-semifluid-generator.png)](docs/screenshots/09-semifluid-generator.png)
 
 ## Requirements and compatibility
 
