@@ -3,7 +3,6 @@ package dev.ic2universalenergy;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationHandler;
-import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.lang.reflect.Proxy;
 import java.util.EnumSet;
@@ -128,6 +127,21 @@ public final class Ic2ToBuildCraftEnergyBridge
         {
             return;
         }
+        Map<BlockPos, BridgeSink> levelSinks = this.sinks.get(level);
+        if (levelSinks != null)
+        {
+            for (BridgeSink sink : java.util.List.copyOf(levelSinks.values()))
+            {
+                if (sink.target.isRemoved() || !level.hasChunkAt(sink.position) || level.getBlockEntity(sink.position) != sink.target)
+                {
+                    this.unregister(level, sink.position);
+                }
+                else
+                {
+                    sink.tickServer();
+                }
+            }
+        }
         Set<BlockPos> positions = this.pendingPositions.remove(level);
         if (positions == null)
         {
@@ -178,6 +192,7 @@ public final class Ic2ToBuildCraftEnergyBridge
         {
             BridgeSink sink = new BridgeSink(level, pos.immutable(), blockEntity, this);
             sink.setProxy(this.createIc2SinkProxy(sink));
+            sink.tickServer();
             if (this.postEnergyTileEvent(IC2_LOAD_EVENT, sink.proxy()))
             {
                 inLevel.put(sink.position(), sink);
@@ -308,11 +323,17 @@ public final class Ic2ToBuildCraftEnergyBridge
 
     private static final class BridgeSink implements InvocationHandler
     {
+        private static final int UNSIDED_INDEX = Direction.values().length;
+        private static final int UNSIDED_BIT = 1 << UNSIDED_INDEX;
         private final ServerLevel level;
         private final BlockPos position;
         private final BlockEntity target;
         private final Ic2ToBuildCraftEnergyBridge owner;
         private Object proxy;
+        private final long[] pendingMicroMj = new long[Direction.values().length + 1];
+        private long availableMicroMj;
+        private double euPerMj;
+        private int receivingSideMask;
 
         private BridgeSink(ServerLevel level, BlockPos position, BlockEntity target, Ic2ToBuildCraftEnergyBridge owner)
         {
@@ -344,7 +365,7 @@ public final class Ic2ToBuildCraftEnergyBridge
             {
                 case "getWorldObj" -> this.level;
                 case "getPosition" -> this.position;
-                case "acceptsEnergyFrom" -> BridgeConfig.ENERGY_BRIDGE_ENABLED.get();
+                case "acceptsEnergyFrom" -> this.accepts(arguments);
                 case "getDemandedEnergy" -> this.demand();
                 case "getSinkTier" -> 4;
                 case "injectEnergy" -> this.inject(arguments);
@@ -356,69 +377,124 @@ public final class Ic2ToBuildCraftEnergyBridge
             };
         }
 
-        private double demand()
+        //World and optional-mod capability access must stay on the server thread. IC2 also
+        //calls acceptsEnergyFrom/getDemandedEnergy/injectEnergy from its worker threads.
+        private void tickServer()
         {
-            if (!BridgeConfig.ENERGY_BRIDGE_ENABLED.get() || this.target.isRemoved() || this.level.getBlockEntity(this.position) != this.target)
+            this.flushPendingServer();
+            double ratio = EnergyConversionService.euPerMegaJoule();
+            int sideMask = 0;
+            long requested = 0;
+            if (BridgeConfig.ENERGY_BRIDGE_ENABLED.get())
             {
-                return 0.0D;
+                for (int index = 0; index < this.pendingMicroMj.length; index++)
+                {
+                    Direction side = index == UNSIDED_INDEX ? null : Direction.values()[index];
+                    Object receiver = this.owner.receiverFor(this.target, side);
+                    if (receiver != null)
+                    {
+                        sideMask |= 1 << index;
+                        requested = Math.max(requested, this.powerRequested(receiver));
+                    }
+                }
             }
-            long requestedMicroMj = 0L;
-            Object unsided = this.owner.receiverFor(this.target, null);
-            requestedMicroMj = Math.max(requestedMicroMj, this.powerRequested(unsided));
-            for (Direction direction : Direction.values())
+            if (BridgeConfig.ENERGY_TRANSFER_LIMIT_MODE.get() == EnergyTransferLimitMode.MANUAL)
             {
-                requestedMicroMj = Math.max(requestedMicroMj, this.powerRequested(this.owner.receiverFor(this.target, direction)));
+                requested = Math.min(requested, EnergyConversionService.euToMicroMegaJoules(
+                        BridgeConfig.ENERGY_TRANSFER_LIMIT_EU_PER_TICK.get(), ratio));
             }
-            double requestedEu = EnergyConversionService.microMegaJoulesToEu(requestedMicroMj);
-            return BridgeConfig.ENERGY_TRANSFER_LIMIT_MODE.get() == EnergyTransferLimitMode.MANUAL
-                    ? Math.min(requestedEu, BridgeConfig.ENERGY_TRANSFER_LIMIT_EU_PER_TICK.get())
-                    : requestedEu;
+            synchronized (this)
+            {
+                this.euPerMj = ratio;
+                this.receivingSideMask = sideMask;
+                this.availableMicroMj = Math.max(0, requested - this.totalPending());
+            }
         }
 
-        private double inject(Object[] arguments)
+        private synchronized boolean accepts(Object[] arguments)
         {
-            if (!BridgeConfig.ENERGY_BRIDGE_ENABLED.get() || arguments == null || arguments.length < 2)
-            {
-                return arguments != null && arguments.length > 1 && arguments[1] instanceof Number number ? number.doubleValue() : 0.0D;
-            }
-            Direction direction = arguments[0] instanceof Direction value ? value : null;
-            double offeredEu = arguments[1] instanceof Number number ? number.doubleValue() : 0.0D;
-            if (!(offeredEu > 0.0D) || !Double.isFinite(offeredEu))
-            {
-                return offeredEu;
-            }
-            Object receiver = this.owner.receiverFor(this.target, direction);
-            if (receiver == null)
-            {
-                receiver = this.owner.receiverFor(this.target, null);
-            }
-            if (receiver == null)
-            {
-                return offeredEu;
-            }
+            Direction side = arguments != null && arguments.length > 1 && arguments[1] instanceof Direction value ? value : null;
+            return this.acceptsDirection(side);
+        }
 
-            try
+        private synchronized double demand()
+        {
+            return EnergyConversionService.microMegaJoulesToEu(this.availableMicroMj, this.euPerMj);
+        }
+
+        private synchronized double inject(Object[] arguments)
+        {
+            if (arguments == null || arguments.length < 2 || !(arguments[1] instanceof Number number))
             {
-                if (!this.owner.canReceive(receiver))
-                {
-                    return offeredEu;
-                }
-                double requestedEu = EnergyConversionService.microMegaJoulesToEu(this.owner.powerRequested(receiver));
-                double limitEu = BridgeConfig.ENERGY_TRANSFER_LIMIT_MODE.get() == EnergyTransferLimitMode.MANUAL
-                        ? BridgeConfig.ENERGY_TRANSFER_LIMIT_EU_PER_TICK.get()
-                        : Double.MAX_VALUE;
-                long offeredMicroMj = EnergyConversionService.euToMicroMegaJoules(Math.min(offeredEu, Math.min(requestedEu, limitEu)));
-                if (offeredMicroMj <= 0L)
-                {
-                    return offeredEu;
-                }
-                long rejectedMicroMj = Math.min(offeredMicroMj, this.owner.receivePower(receiver, offeredMicroMj));
-                double acceptedEu = EnergyConversionService.microMegaJoulesToEu(offeredMicroMj - rejectedMicroMj);
-                return Math.max(0.0D, offeredEu - acceptedEu);
+                return 0;
             }
-            catch (ReflectiveOperationException | RuntimeException exception)
+            double offeredEu = number.doubleValue();
+            Direction side = arguments[0] instanceof Direction value ? value : null;
+            if (!(offeredEu > 0) || !Double.isFinite(offeredEu) || !this.acceptsDirection(side))
             {
                 return offeredEu;
+            }
+            long accepted = Math.min(EnergyConversionService.euToMicroMegaJoules(offeredEu, this.euPerMj),
+                    Math.min(this.availableMicroMj, Long.MAX_VALUE - this.totalPending()));
+            this.availableMicroMj -= accepted;
+            this.pendingMicroMj[side == null ? UNSIDED_INDEX : side.ordinal()] += accepted;
+            return Math.max(0, offeredEu - EnergyConversionService.microMegaJoulesToEu(accepted, this.euPerMj));
+        }
+
+        private boolean acceptsDirection(Direction side)
+        {
+            return (this.receivingSideMask & (UNSIDED_BIT | (side == null ? 0 : 1 << side.ordinal()))) != 0;
+        }
+
+        private long totalPending()
+        {
+            long total = 0;
+            for (long queued : this.pendingMicroMj)
+            {
+                total += queued;
+            }
+            return total;
+        }
+
+        private void flushPendingServer()
+        {
+            for (int index = 0; index < this.pendingMicroMj.length; index++)
+            {
+                long queued;
+                synchronized (this)
+                {
+                    queued = this.pendingMicroMj[index];
+                }
+                if (queued <= 0)
+                {
+                    continue;
+                }
+                Direction side = index == UNSIDED_INDEX ? null : Direction.values()[index];
+                Object receiver = this.owner.receiverFor(this.target, side);
+                if (receiver == null && side != null)
+                {
+                    receiver = this.owner.receiverFor(this.target, null);
+                }
+                long offered = Math.min(queued, this.powerRequested(receiver));
+                if (offered > 0)
+                {
+                    try
+                    {
+                        long accepted = offered - Math.min(offered, this.owner.receivePower(receiver, offered));
+                        synchronized (this)
+                        {
+                            this.pendingMicroMj[index] -= accepted;
+                        }
+                        if (accepted > 0)
+                        {
+                            this.target.setChanged();
+                        }
+                    }
+                    catch (ReflectiveOperationException | RuntimeException exception)
+                    {
+                        //Retain the paid-for energy until the receiver can accept it.
+                    }
+                }
             }
         }
 

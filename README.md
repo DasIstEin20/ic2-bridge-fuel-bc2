@@ -6,6 +6,22 @@
 
 **IC2 Universal Energy Extension** is a Forge 1.20.1 addon that connects IndustrialCraft 2 EU networks to Forge Energy machines through full-featured Universal Cables. The project started as `ic2-bridge-fuel-bc2`, a focused IC2/BuildCraft fuel and energy bridge, and grew into a broader energy-integration addon with selected Mekanism transmitter systems and the Configurator.
 
+## 1.0.1 crash fix
+
+Restores registration of the original Mekanism `PacketKey` client-to-server message. In 1.0.0, pressing the Boost key (Left Ctrl by default, also used for sprinting) in a world could crash the client with `IllegalArgumentException: Invalid message mekanism.common.network.to_server.PacketKey`. Existing packet IDs are preserved. Update both client and server to 1.0.1 when playing multiplayer.
+
+The `PacketKeyRegistrationTest` GameTest exercises the initialized Forge channel encoder for key presses and releases. Run it with the existing energy bridge tests using `gradlew.bat runGameTestServer`; build the primary distributable with `gradlew.bat jar reobfJar`.
+
+## 1.0.2 integration fixes
+
+The MJ receiving bridge snapshots demand on the server thread and queues worker-thread EU injections for server-thread delivery. Multiple inputs share one per-endpoint transfer budget. Known BuildCraft fuel profiles now read energy densities from the installed fuel registry instead of assuming every CE release uses the same recipes. Fuel registration waits for the world's server configuration. Removed FE receivers are detached from the EnergyNet.
+
+Forestry now uses only `IC2 EU -> Universal Cable -> Forestry FE`, without a separate Forestry adapter or configuration toggle. The original Mekanism cable network is unchanged. The 1.0.1 packet crash fix is included.
+
+Run the optional, local-mod integration suite on drive R: with `scripts/test-integrations.ps1 -BuildJar`. It uses Java 17 and the supplied `R:\Codex-misc\Mods` directory, runs GameTests, builds/reobfuscates the primary JAR, and audits it for test classes, embedded mods, Java version and MIT attribution. Test code and fixtures are kept outside the production source set.
+
+Validation: 20/20 integration GameTests and 6/6 base GameTests without BuildCraft/Forestry. See the [test report and verification limits](docs/integration-test-report-1.0.2.md).
+
 ## In game
 
 ![An IC2 MFSU powering a Refined Storage network through Universal Cables](docs/images/mfsu-universal-cable-refined-storage.png)
@@ -21,7 +37,7 @@
 - Demand-aware EU intake: when downstream FE consumers stop accepting energy, the cable endpoint stops requesting EU instead of voiding it.
 - IC2 EU ↔ BuildCraft MJ conversion.
 - BuildCraft fuel ↔ IC2 Semifluid Generator integration.
-- Forestry FE → IC2 support and generic IC2 → Forestry FE delivery.
+- Forestry FE support through the original Universal Cable network; no separate Forestry energy adapter.
 - Crafting recipes based on IC2 materials.
 - English and Polish configuration UI.
 
@@ -35,7 +51,7 @@ IC2 generator/storage -> IC2 cable -> Universal Cable network -> FE machine
 
 Each receiving Universal Cable endpoint is exposed to IC2's EnergyNet as a sink. Accepted EU is converted at the boundary by the shared `EnergyConversionService`, then inserted through the cable's Forge Energy capability. The cable network therefore carries FE and retains the original tier limits, routing, rendering, and transfer behavior.
 
-The bridge applies downstream demand and backpressure before requesting EU. A full or missing FE consumer closes the input, while queued converted energy remains accounted for rather than disappearing. Direct IC2-cable-to-FE-machine connections remain supported as well.
+The bridge applies downstream demand and backpressure before requesting EU. A full or missing FE consumer closes the input, while queued converted energy remains accounted for rather than disappearing. Direct IC2-cable-to-FE-machine connections remain supported for other FE consumers; Forestry intentionally requires a Universal Cable.
 
 Refined Storage integration is capability-based: no Refined Storage classes are bundled or linked. Any machine exposing a receiving `ForgeCapabilities.ENERGY` endpoint can use the same path.
 
@@ -51,9 +67,11 @@ The known BuildCraft endpoints are also included in IC2's `forge:cable_connectab
 
 BuildCraft blocks exposing `IMjPassiveProvider` are registered as IC2 EnergyNet sources. Their offered micro-MJ is converted to EU and delivered through the normal IC2 grid, preserving IC2 cable voltage, tier, and transformer rules. Both BuildCraft energy directions can be enabled independently.
 
-### Forestry ↔ IC2
+BuildCraft CE 8.0.13 engines push MJ and do not expose this passive-provider capability. Do not interpret the reverse bridge as support for directly connecting those engines to a BatBox. This API limitation does not affect IC2 generators or BatBoxes powering a Quarry.
 
-Forestry machines that receive FE are handled by the generic IC2 → FE bridge. Forestry engines additionally expose their FE output as an IC2 EnergyNet source. The adapter respects the side on which Forestry exposes the energy capability and uses the shared FE/EU conversion and transfer-limit settings.
+### Forestry through Universal Cables
+
+Connect an IC2 source to a Universal Cable and connect the cable to Forestry's FE input. The cable's existing IC2 adapter converts EU through its original Forge Energy capability; the unmodified Mekanism network distributes FE to Forestry. Forestry machines are not registered as separate IC2 endpoints. There is no dedicated Forestry-to-IC2 adapter or toggle.
 
 ### BuildCraft transport pipes ↔ IC2 machines
 
@@ -110,7 +128,6 @@ The most important server-config sections are:
     ic2ToBuildCraftEnabled = true
     buildCraftToIc2Enabled = true
     ic2ToForgeEnergyEnabled = true
-    forestryToIc2Enabled = true
     forgeEnergyPerEu = 4.0
     conversionMode = "AUTO"
     manualEuPerBuildCraftMj = 2.5

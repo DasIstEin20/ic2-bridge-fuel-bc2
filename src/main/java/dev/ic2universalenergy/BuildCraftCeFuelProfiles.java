@@ -4,14 +4,14 @@ import java.util.List;
 import java.util.Map;
 import java.util.function.Function;
 import java.util.stream.Collectors;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraftforge.fluids.FluidStack;
+import net.minecraftforge.fluids.FluidType;
+import net.minecraftforge.registries.ForgeRegistries;
 
 /**
- * Fuel energy densities from BuildCraft Community Edition 8.0.13+1.20.1.
- *
- * <p>The values are derived from its {@code BCEnergyRecipes}: for each fuel,
- * {@code powerPerCycle * totalBurningTime / 1000}. BuildCraft stores power in
- * micro-MJ, and its combustion engine consumes one mB at a time, hence the
- * resulting values are MJ/mB.</p>
+ * Known fuel settings with densities read from the installed BuildCraft registry.
+ * Legacy densities are used only when the optional fuel API is unavailable.
  */
 final class BuildCraftCeFuelProfiles
 {
@@ -69,19 +69,51 @@ final class BuildCraftCeFuelProfiles
             return null;
         }
 
+        double megaJoulesPerMb = liveDensity(definition);
         double euPerMb = mode == BuildCraftFuelMode.MANUAL
                 ? EnergyConversionService.applyFuelBalance(
-                        definition.megaJoulesPerMb() * settings.manualEuPerBuildCraftMj.get()
+                        megaJoulesPerMb * settings.manualEuPerBuildCraftMj.get()
                 )
-                : EnergyConversionService.buildCraftFuelEuPerMb(definition.megaJoulesPerMb());
+                : EnergyConversionService.buildCraftFuelEuPerMb(megaJoulesPerMb);
         return FuelRule.fromEnergyDensity(
                 BridgeConfig.BUILDCRAFT_CE_CYCLE_AMOUNT_MB.get(),
                 euPerMb,
                 1.0D,
                 mode == BuildCraftFuelMode.MANUAL
                         ? "BuildCraft CE manual profile"
-                        : "BuildCraft CE 8.0.13 profile"
+                        : "BuildCraft CE fuel profile"
         );
+    }
+
+    private static double liveDensity(FuelDefinition definition)
+    {
+        Object manager = BuildCraftCompatibilityResolver.findCompatibleFuelRegistryManager();
+        var fluid = ForgeRegistries.FLUIDS.getValue(new ResourceLocation(definition.id()));
+        if (manager != null && fluid != null)
+        {
+            try
+            {
+                ClassLoader loader = BuildCraftCeFuelProfiles.class.getClassLoader();
+                Class<?> managerApi = Class.forName("buildcraft.api.fuels.IFuelManager", false, loader);
+                Object fuel = managerApi.getMethod("getFuel", FluidStack.class).invoke(manager, new FluidStack(fluid, 1));
+                if (fuel != null)
+                {
+                    Class<?> fuelApi = Class.forName("buildcraft.api.fuels.IFuel", false, loader);
+                    long power = ((Number) fuelApi.getMethod("getPowerPerCycle").invoke(fuel)).longValue();
+                    int ticks = ((Number) fuelApi.getMethod("getTotalBurningTime").invoke(fuel)).intValue();
+                    double density = power / (double) EnergyConversionService.MICRO_MJ_PER_MJ * ticks / FluidType.BUCKET_VOLUME;
+                    if (density > 0 && Double.isFinite(density))
+                    {
+                        return density;
+                    }
+                }
+            }
+            catch (ReflectiveOperationException | RuntimeException | LinkageError ignored)
+            {
+                //Keep optional/forked BuildCraft versions usable without the known fuel API.
+            }
+        }
+        return definition.megaJoulesPerMb();
     }
 
     record FuelDefinition(String id, String displayName, String configKey, double megaJoulesPerMb)

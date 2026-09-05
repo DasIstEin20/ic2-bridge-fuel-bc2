@@ -34,9 +34,8 @@ import org.slf4j.LoggerFactory;
  * not a list of mod IDs, so the same bridge covers Refined Storage and future
  * FE machines without a per-mod adapter.
  *
- * <p>Forestry receivers are excluded here because {@link ForestryEnergyBridge}
- * owns their paired FE ↔ IC2 endpoint. Both paths share the exact same FE/EU
- * configuration, so the exclusion only prevents two IC2 sinks at one block.</p>
+ * <p>Forestry is intentionally handled only by Universal Cables and their
+ * original Forge Energy network, without a second machine-level adapter.</p>
  */
 public final class Ic2ToForgeEnergyBridge
 {
@@ -130,7 +129,14 @@ public final class Ic2ToForgeEnergyBridge
         {
             for (ForgeEnergySink sink : java.util.List.copyOf(levelSinks.values()))
             {
-                sink.tickServer();
+                if (sink.target.isRemoved() || !level.hasChunkAt(sink.position) || level.getBlockEntity(sink.position) != sink.target)
+                {
+                    this.unregister(level, sink.position);
+                }
+                else
+                {
+                    sink.tickServer();
+                }
             }
         }
 
@@ -267,7 +273,7 @@ public final class Ic2ToForgeEnergyBridge
     {
         ResourceLocation id = ForgeRegistries.BLOCK_ENTITY_TYPES.getKey(blockEntity.getType());
         return blockEntity instanceof IEnergyTile
-                || id != null && (FORESTRY_MOD_ID.equals(id.getNamespace()) || IC2_MOD_ID.equals(id.getNamespace()));
+                || id != null && (IC2_MOD_ID.equals(id.getNamespace()) || FORESTRY_MOD_ID.equals(id.getNamespace()));
     }
 
     private boolean hasReceivingStorage(BlockEntity blockEntity)

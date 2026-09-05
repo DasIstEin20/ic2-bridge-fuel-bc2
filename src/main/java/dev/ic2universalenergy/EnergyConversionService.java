@@ -38,18 +38,29 @@ public final class EnergyConversionService
 
     public static long euToMicroMegaJoules(double eu)
     {
-        if (!(eu > 0.0D) || !Double.isFinite(eu))
+        return euToMicroMegaJoules(eu, euPerMegaJoule());
+    }
+
+    public static long euToMicroMegaJoules(double eu, double euPerMj)
+    {
+        if (!(eu > 0.0D) || !Double.isFinite(eu) || !(euPerMj > 0.0D) || !Double.isFinite(euPerMj))
         {
             return 0L;
         }
 
-        double result = euToMegaJoules(eu) * MICRO_MJ_PER_MJ;
+        double result = eu / euPerMj * MICRO_MJ_PER_MJ;
         return result >= Long.MAX_VALUE ? Long.MAX_VALUE : Math.max(0L, (long) Math.floor(result));
     }
 
     public static double microMegaJoulesToEu(long microMegaJoules)
     {
-        return microMegaJoules <= 0 ? 0.0D : megaJoulesToEu(microMegaJoules / (double) MICRO_MJ_PER_MJ);
+        return microMegaJoulesToEu(microMegaJoules, euPerMegaJoule());
+    }
+
+    public static double microMegaJoulesToEu(long microMegaJoules, double euPerMj)
+    {
+        return microMegaJoules <= 0 || !(euPerMj > 0.0D) || !Double.isFinite(euPerMj)
+                ? 0.0D : microMegaJoules / (double) MICRO_MJ_PER_MJ * euPerMj;
     }
 
     public static int euToForgeEnergy(double eu)

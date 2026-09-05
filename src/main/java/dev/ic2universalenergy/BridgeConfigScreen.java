@@ -124,9 +124,7 @@ public final class BridgeConfigScreen extends Screen
         limit.setTooltip(Tooltip.create(Component.translatable("screen.ic2universalenergy.tooltip.transfer_limit")));
         this.addToggle("screen.ic2universalenergy.toggle.energy_ic2_to_fe", this.draft.ic2ToForgeEnergyBridgeEnabled,
                 value -> this.draft.ic2ToForgeEnergyBridgeEnabled = value, 262);
-        this.addToggle("screen.ic2universalenergy.toggle.energy_forestry_to_ic2", this.draft.forestryToIc2EnergyBridgeEnabled,
-                value -> this.draft.forestryToIc2EnergyBridgeEnabled = value, 290);
-        this.addInput("forgeEnergyPerEu", "screen.ic2universalenergy.field.forge_energy_per_eu", this.draft.forgeEnergyPerEu, 318);
+        this.addInput("forgeEnergyPerEu", "screen.ic2universalenergy.field.forge_energy_per_eu", this.draft.forgeEnergyPerEu, 290);
     }
 
     private void addBuildCraftToIc2Widgets()
@@ -404,7 +402,6 @@ public final class BridgeConfigScreen extends Screen
             BridgeConfig.ENERGY_BRIDGE_ENABLED.set(this.draft.energyBridgeEnabled);
             BridgeConfig.BUILDCRAFT_TO_IC2_ENERGY_BRIDGE_ENABLED.set(this.draft.buildCraftToIc2EnergyBridgeEnabled);
             BridgeConfig.IC2_TO_FORGE_ENERGY_BRIDGE_ENABLED.set(this.draft.ic2ToForgeEnergyBridgeEnabled);
-            BridgeConfig.FORESTRY_TO_IC2_ENERGY_BRIDGE_ENABLED.set(this.draft.forestryToIc2EnergyBridgeEnabled);
             BridgeConfig.FORGE_ENERGY_PER_EU.set(forgeEnergyPerEu);
             BridgeConfig.ENERGY_CONVERSION_MODE.set(this.draft.energyConversionMode);
             BridgeConfig.EU_PER_BUILDCRAFT_MJ.set(euPerMj);
@@ -736,7 +733,6 @@ public final class BridgeConfigScreen extends Screen
         private boolean energyBridgeEnabled;
         private boolean buildCraftToIc2EnergyBridgeEnabled;
         private boolean ic2ToForgeEnergyBridgeEnabled;
-        private boolean forestryToIc2EnergyBridgeEnabled;
         private boolean bcToIc2Enabled;
         private boolean ic2ToBcEnabled;
         private boolean ic2ToBcAutoDiscovery;
@@ -769,7 +765,6 @@ public final class BridgeConfigScreen extends Screen
             result.energyBridgeEnabled = BridgeConfig.ENERGY_BRIDGE_ENABLED.get();
             result.buildCraftToIc2EnergyBridgeEnabled = BridgeConfig.BUILDCRAFT_TO_IC2_ENERGY_BRIDGE_ENABLED.get();
             result.ic2ToForgeEnergyBridgeEnabled = BridgeConfig.IC2_TO_FORGE_ENERGY_BRIDGE_ENABLED.get();
-            result.forestryToIc2EnergyBridgeEnabled = BridgeConfig.FORESTRY_TO_IC2_ENERGY_BRIDGE_ENABLED.get();
             result.bcToIc2Enabled = BridgeConfig.FUEL_BRIDGE_BC_TO_IC2_ENABLED.get();
             result.ic2ToBcEnabled = BridgeConfig.FUEL_BRIDGE_IC2_TO_BC_ENABLED.get();
             result.ic2ToBcAutoDiscovery = BridgeConfig.IC2_TO_BC_AUTO_DISCOVERY.get();

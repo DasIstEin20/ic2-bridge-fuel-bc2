@@ -1685,7 +1685,6 @@
   "screen.ic2universalenergy.toggle.energy": "IC2 → BuildCraft",
   "screen.ic2universalenergy.toggle.energy_bc_to_ic2": "BuildCraft → IC2",
   "screen.ic2universalenergy.toggle.energy_ic2_to_fe": "IC2 → Forge Energy",
-  "screen.ic2universalenergy.toggle.energy_forestry_to_ic2": "Forestry → IC2",
   "screen.ic2universalenergy.toggle.bc_to_ic2": "BuildCraft → IC2",
   "screen.ic2universalenergy.toggle.ce_profiles": "Use automatic BuildCraft CE profiles",
   "screen.ic2universalenergy.toggle.ic2_to_bc": "IC2 → BuildCraft fuel bridge",

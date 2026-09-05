@@ -87,6 +87,31 @@ configurations {
 //Add all extra source sets that the main sourceSet should have
 setupExtraSourceSets(sourceSets.main)
 
+//A spacious, isolated fixture prevents Quarry frames and neighbouring tests from sharing blocks.
+def integrationTestResources = layout.buildDirectory.dir('generated/integrationTestResources')
+sourceSets.gameTestMain.resources.srcDir(integrationTestResources)
+def generateIntegrationTestStructure = tasks.register('generateIntegrationTestStructure') {
+    def output = integrationTestResources.map { it.file('data/ic2universalenergy_integration/structures/bridge_test.nbt') }
+    outputs.file(output)
+    doLast {
+        def destination = output.get().asFile
+        destination.parentFile.mkdirs()
+        new DataOutputStream(new java.util.zip.GZIPOutputStream(new FileOutputStream(destination))).withCloseable { nbt ->
+            nbt.writeByte(10); nbt.writeUTF('')
+            nbt.writeByte(3); nbt.writeUTF('DataVersion'); nbt.writeInt(3465)
+            nbt.writeByte(9); nbt.writeUTF('size'); nbt.writeByte(3); nbt.writeInt(3)
+            nbt.writeInt(48); nbt.writeInt(12); nbt.writeInt(32)
+            nbt.writeByte(9); nbt.writeUTF('palette'); nbt.writeByte(10); nbt.writeInt(1)
+            nbt.writeByte(8); nbt.writeUTF('Name'); nbt.writeUTF('minecraft:air'); nbt.writeByte(0)
+            for (String listName : ['blocks', 'entities']) {
+                nbt.writeByte(9); nbt.writeUTF(listName); nbt.writeByte(10); nbt.writeInt(0)
+            }
+            nbt.writeByte(0)
+        }
+    }
+}
+tasks.named('processGameTestMainResources').configure { dependsOn(generateIntegrationTestStructure) }
+
 configurations {
     //Make sure all our sub source set stuff extends the proper base methods so that
     // they can see all the dependencies we have in dependencies including forge
@@ -303,7 +328,7 @@ minecraft {
             }
         }
         server { setupRunConfig(it, true) }
-        gameTestServer { setupRunConfig(it, true, "runGameTests") }
+        gameTestServer { setupRunConfig(it, true, project.hasProperty('baseIntegrationTest') ? "build/runGameTestsBase" : "runGameTests") }
         data {
             setupRunConfig(it, false)
             environment 'target', 'fmluserdevdata'
@@ -337,7 +362,8 @@ def setupRunConfig(RunConfig runConfig, boolean supportsGameTests, String direct
     if (supportsGameTests) {
         //Specify all our mods as domains to look for game tests
         runConfig.property 'forge.enabledGameTestNamespaces',
-              project.findProperty('gameTestNamespaces') ?: 'ic2universalenergy'
+              project.findProperty('gameTestNamespaces') ?: (project.hasProperty('integrationModsDir')
+                    ? 'ic2universalenergy,ic2universalenergy_integration' : 'ic2universalenergy')
     }
 
     if (project.hasProperty('forge_force_ansi')) {
@@ -386,6 +412,9 @@ void exclusiveRepo(RepositoryHandler handler, String url, Consumer<InclusiveRepo
 
 repositories { RepositoryHandler handler ->
     flatDir { dirs 'libs' }
+    if (project.hasProperty('integrationModsDir')) {
+        flatDir { dirs project.property('integrationModsDir') }
+    }
     exclusiveRepo(handler, 'https://maven.blamejared.com', filter -> {
         filter.includeGroupByRegex 'com\\.blamejared.*'
         filter.includeGroup 'mezz.jei'
@@ -410,6 +439,12 @@ dependencies {
     minecraft "net.minecraftforge:forge:${minecraft_version}-${forge_version}"
     implementation fg.deobf("ic2:ic2-forge:${ic2_version}")
     runtimeOnly fg.deobf("refinedstorage:refinedstorage:1.12.4")
+    //Optional local integration-test profile; none of these mods are bundled in the output JAR.
+    if (project.hasProperty('integrationModsDir')) {
+        runtimeOnly fg.deobf("buildcraft:BuildCraft-Community-Edition:${project.findProperty('integrationBuildCraftVersion') ?: '8.0.13+1.20.1+forge'}")
+        runtimeOnly fg.deobf("forestry:forestry:${project.findProperty('integrationForestryVersion') ?: '1.20.1-2.10.2'}")
+        runtimeOnly fg.deobf("vazkii:Patchouli:1.20.1-85-FORGE")
+    }
 
     annotationProcessor project(":annotation-processor")
 

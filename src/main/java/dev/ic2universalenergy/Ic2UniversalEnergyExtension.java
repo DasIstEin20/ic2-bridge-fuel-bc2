@@ -23,7 +23,6 @@ public final class Ic2UniversalEnergyExtension
     private final Ic2ToBuildCraftEnergyBridge ic2ToBuildCraftEnergyBridge = new Ic2ToBuildCraftEnergyBridge();
     private final BuildCraftToIc2EnergyBridge buildCraftToIc2EnergyBridge = new BuildCraftToIc2EnergyBridge();
     private final Ic2ToForgeEnergyBridge ic2ToForgeEnergyBridge = new Ic2ToForgeEnergyBridge();
-    private final ForestryEnergyBridge forestryEnergyBridge = new ForestryEnergyBridge();
 
     public Ic2UniversalEnergyExtension(FMLJavaModLoadingContext context)
     {
@@ -57,11 +56,6 @@ public final class Ic2UniversalEnergyExtension
         }
         this.ic2ToForgeEnergyBridge.register();
         LOGGER.info("The IC2 → Forge Energy bridge is active for FE receivers, including future compatible mods.");
-        if (ForestryEnergyBridge.isForestryInstalled())
-        {
-            this.forestryEnergyBridge.register();
-            LOGGER.info("Forestry detected. The bidirectional Forestry Forge Energy ↔ IC2 bridge is active.");
-        }
         if (compatibility.detected() && !compatibility.energyBridge() && !compatibility.buildCraftToIc2EnergyBridge())
         {
             LOGGER.info("BuildCraft MJ receiver/provider APIs were not detected yet; the energy bridges will keep probing endpoints while fuel features remain available.");
@@ -94,6 +88,12 @@ public final class Ic2UniversalEnergyExtension
 
     private void registerFuelBridges(String phase)
     {
+        //SERVER config belongs to the world and is unavailable during common setup/load complete.
+        //Register from ServerAboutToStart once Forge has loaded that world's actual fuel settings.
+        if (!BridgeConfig.SPEC.isLoaded())
+        {
+            return;
+        }
         BuildCraftCompatibilityResolver.Snapshot compatibility = BuildCraftCompatibilityResolver.resolve();
         BuildCraftCompatibilityResolver.logCompatibility(compatibility);
 

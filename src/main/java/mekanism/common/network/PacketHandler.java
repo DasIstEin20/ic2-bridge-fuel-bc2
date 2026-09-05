@@ -62,5 +62,8 @@ public class PacketHandler extends BasePacketHandler {
         registerServerToClient(PacketTransmitterUpdate.class, PacketTransmitterUpdate::decode);
         registerServerToClient(PacketTransporterUpdate.class, PacketTransporterUpdate::decode);
         registerServerToClient(PacketUpdateTile.class, PacketUpdateTile::decode);
+
+        //The retained key bindings still synchronize key state. Append to preserve existing packet IDs.
+        registerClientToServer(PacketKey.class, PacketKey::decode);
     }
 }
