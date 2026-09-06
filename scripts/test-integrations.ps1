@@ -48,7 +48,7 @@ try {
         throw "Gradle failed with exit code $gradleExit. See $testLog"
     }
     #Forge can return zero after a mod-loading failure, before running any tests.
-    $expectedTests = if ($WithoutOptionalMods) { 6 } else { 20 }
+    $expectedTests = if ($WithoutOptionalMods) { 8 } else { 23 }
     if (!(Select-String -LiteralPath $testLog -Pattern "All $expectedTests required tests passed" -Quiet)) {
         throw "Expected $expectedTests successful GameTests; check namespace filtering and failures in $testLog"
     }

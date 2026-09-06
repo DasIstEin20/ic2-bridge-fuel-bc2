@@ -249,7 +249,7 @@ def setupTasks(SourceSet sourceSet) {
         finalizedBy(replaceResourceTask)
         doLast {
             fileTree(dir: getOutputs().getFiles().getAsPath(), includes: jsonPatterns).each {
-                File file -> file.setText(JsonOutput.toJson(new JsonSlurper().parse(file)))
+                File file -> file.setText(JsonOutput.toJson(new JsonSlurper().parse(file, 'UTF-8')), 'UTF-8')
             }
         }
     }
@@ -439,6 +439,8 @@ dependencies {
     minecraft "net.minecraftforge:forge:${minecraft_version}-${forge_version}"
     implementation fg.deobf("ic2:ic2-forge:${ic2_version}")
     runtimeOnly fg.deobf("refinedstorage:refinedstorage:1.12.4")
+    //Only the public RS API is referenced; energy transfer remains Forge-capability based.
+    compileOnly fg.deobf("refinedstorage:refinedstorage:1.12.4")
     //Optional local integration-test profile; none of these mods are bundled in the output JAR.
     if (project.hasProperty('integrationModsDir')) {
         runtimeOnly fg.deobf("buildcraft:BuildCraft-Community-Edition:${project.findProperty('integrationBuildCraftVersion') ?: '8.0.13+1.20.1+forge'}")

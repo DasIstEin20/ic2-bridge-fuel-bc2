@@ -22,6 +22,14 @@ Run the optional, local-mod integration suite on drive R: with `scripts/test-int
 
 Validation: 20/20 integration GameTests and 6/6 base GameTests without BuildCraft/Forestry. See the [test report and verification limits](docs/integration-test-report-1.0.2.md).
 
+## 1.0.3 persistence and GUI fixes
+
+The Universal Cable's Forge Energy compatibility wrapper now marks the receiving or supplying machine's loaded chunk for saving after a real, nonzero transfer. This fixes stale stored-energy values after world reloads with block-entity-backed FE implementations such as Forestry. Refined Storage keeps controller energy in separate world SavedData, so an optional public-API notification also marks that network data for saving. Simulations, rejected transfers and removed owners do not trigger saves. Distribution, capability routing and conversion ratios are unchanged; there are no machine-specific energy adapters.
+
+Resource packaging explicitly uses UTF-8, preserving arrows, status symbols and translated text on Windows. The config screen uses the current mod name, responsive input columns, labels anchored to their fields, a compact Energy page and green save confirmations. Unsaved field values survive resizing.
+
+The release audit also compares all EN/PL translations against their UTF-8 sources and rejects persistence-test classes in the primary JAR. See [1.0.3 changes](CHANGELOG.md) and [test results](docs/integration-test-report-1.0.3.md).
+
 ## In game
 
 ![An IC2 MFSU powering a Refined Storage network through Universal Cables](docs/images/mfsu-universal-cable-refined-storage.png)
@@ -53,7 +61,7 @@ Each receiving Universal Cable endpoint is exposed to IC2's EnergyNet as a sink.
 
 The bridge applies downstream demand and backpressure before requesting EU. A full or missing FE consumer closes the input, while queued converted energy remains accounted for rather than disappearing. Direct IC2-cable-to-FE-machine connections remain supported for other FE consumers; Forestry intentionally requires a Universal Cable.
 
-Refined Storage integration is capability-based: no Refined Storage classes are bundled or linked. Any machine exposing a receiving `ForgeCapabilities.ENERGY` endpoint can use the same path.
+Refined Storage energy transfer is capability-based. Any machine exposing a receiving `ForgeCapabilities.ENERGY` endpoint can use the same path. No Refined Storage classes are bundled and no implementation classes are linked; the optional public API is used only to notify its separate network SavedData after cable transfers.
 
 ## Energy integrations
 

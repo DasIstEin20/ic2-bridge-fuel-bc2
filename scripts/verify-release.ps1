@@ -7,7 +7,7 @@ $archive = [IO.Compression.ZipFile]::OpenRead($resolvedJar)
 try {
     $names = @($archive.Entries.FullName)
     $forbidden = @($names | Where-Object {
-        $_ -match '(IntegrationTest|EnergyBudgetTest|BridgeTestSupport|PacketKeyRegistrationTest|UniversalCableEnergyBridgeTest|TransmitterNetworkTest)(\$[^/]*)?\.class$' -or
+        $_ -match '(IntegrationTest|EnergyBudgetTest|BridgeTestSupport|PacketKeyRegistrationTest|UniversalCableEnergyBridgeTest|ForgeEnergyPersistenceTest|TransmitterNetworkTest)(\$[^/]*)?\.class$' -or
         $_ -match '^mekanism/common/util/test/' -or $_ -match '^META-INF/jarjar/' -or
         $_ -match '^data/ic2universalenergy(_integration)?/structures/bridge_test\.nbt$' -or
         $_ -match '^(ic2|buildcraft|forestry|com/refinedmods)/' -or
@@ -29,6 +29,24 @@ try {
     if ($licenseText -notmatch 'Permission is hereby granted' -or $licenseText -notmatch 'Mekanism') {
         throw 'Mekanism MIT attribution is missing.'
     }
+    $projectDirectory = Split-Path -Parent $PSScriptRoot
+    foreach ($locale in @('en_us', 'pl_pl')) {
+        $languagePath = "assets/ic2universalenergy/lang/$locale.json"
+        $sourcePath = Join-Path $projectDirectory "src/main/resources/$languagePath"
+        if (!(Test-Path -LiteralPath $sourcePath)) {
+            $sourcePath = Join-Path $projectDirectory "src/datagen/generated/mekanism/$languagePath"
+        }
+        $sourceLanguage = Get-Content -LiteralPath $sourcePath -Raw -Encoding UTF8 | ConvertFrom-Json
+        $languageEntry = $archive.GetEntry($languagePath)
+        if (!$languageEntry) { throw "Missing language: $locale" }
+        $reader = [IO.StreamReader]::new($languageEntry.Open(), [Text.Encoding]::UTF8)
+        try { $builtLanguage = $reader.ReadToEnd() | ConvertFrom-Json } finally { $reader.Dispose() }
+        foreach ($property in $sourceLanguage.PSObject.Properties) {
+            if (![string]::Equals($property.Value, $builtLanguage.($property.Name), [StringComparison]::Ordinal)) {
+                throw "UTF-8 resource mismatch: $locale / $($property.Name)"
+            }
+        }
+    }
     $classCount = 0
     foreach ($entry in $archive.Entries) {
         if ($entry.FullName.EndsWith('.class')) {
@@ -43,7 +61,7 @@ try {
             } finally { $stream.Dispose() }
         }
     }
-    Write-Output "Release audit passed: one mod, $classCount Java 17 classes, MIT attribution, no GameTests or embedded mods."
+    Write-Output "Release audit passed: one mod, $classCount Java 17 classes, MIT attribution, UTF-8 EN/PL resources, no GameTests or embedded mods."
 } finally {
     $archive.Dispose()
 }

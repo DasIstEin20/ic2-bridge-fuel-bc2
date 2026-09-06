@@ -6,6 +6,7 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
+import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.Button;
 import net.minecraft.client.gui.components.EditBox;
@@ -31,6 +32,7 @@ public final class BridgeConfigScreen extends Screen
     private final Map<String, EditBox> inputs = new LinkedHashMap<>();
     private Page page = Page.ENERGY;
     private String status = "";
+    private boolean saved;
     private boolean canSave;
 
     public BridgeConfigScreen(Screen parent)
@@ -109,22 +111,22 @@ public final class BridgeConfigScreen extends Screen
     private void addEnergyWidgets()
     {
         this.addToggle("screen.ic2universalenergy.toggle.energy", this.draft.energyBridgeEnabled,
-                value -> this.draft.energyBridgeEnabled = value, 94);
+                value -> this.draft.energyBridgeEnabled = value, 82);
         this.addToggle("screen.ic2universalenergy.toggle.energy_bc_to_ic2", this.draft.buildCraftToIc2EnergyBridgeEnabled,
-                value -> this.draft.buildCraftToIc2EnergyBridgeEnabled = value, 122);
-        this.addEnergyModeButton(150);
-        EditBox ratio = this.addInput("euPerMj", "screen.ic2universalenergy.field.eu_per_mj", this.draft.euPerMj, 178);
+                value -> this.draft.buildCraftToIc2EnergyBridgeEnabled = value, 106);
+        this.addEnergyModeButton(130);
+        EditBox ratio = this.addInput("euPerMj", "screen.ic2universalenergy.field.eu_per_mj", this.draft.euPerMj, 154);
         ratio.setEditable(this.canSave && this.draft.energyConversionMode == EnergyConversionMode.MANUAL);
         ratio.active = this.canSave && this.draft.energyConversionMode == EnergyConversionMode.MANUAL;
         ratio.setTooltip(Tooltip.create(Component.translatable("screen.ic2universalenergy.tooltip.conversion_mode", EnergyConversionService.AUTO_EU_PER_MJ)));
-        this.addTransferLimitModeButton(206);
-        EditBox limit = this.addInput("transferLimit", "screen.ic2universalenergy.field.transfer_limit", this.draft.transferLimitEuPerTick, 234);
+        this.addTransferLimitModeButton(178);
+        EditBox limit = this.addInput("transferLimit", "screen.ic2universalenergy.field.transfer_limit", this.draft.transferLimitEuPerTick, 202);
         limit.setEditable(this.canSave && this.draft.transferLimitMode == EnergyTransferLimitMode.MANUAL);
         limit.active = this.canSave && this.draft.transferLimitMode == EnergyTransferLimitMode.MANUAL;
         limit.setTooltip(Tooltip.create(Component.translatable("screen.ic2universalenergy.tooltip.transfer_limit")));
         this.addToggle("screen.ic2universalenergy.toggle.energy_ic2_to_fe", this.draft.ic2ToForgeEnergyBridgeEnabled,
-                value -> this.draft.ic2ToForgeEnergyBridgeEnabled = value, 262);
-        this.addInput("forgeEnergyPerEu", "screen.ic2universalenergy.field.forge_energy_per_eu", this.draft.forgeEnergyPerEu, 290);
+                value -> this.draft.ic2ToForgeEnergyBridgeEnabled = value, 226);
+        this.addInput("forgeEnergyPerEu", "screen.ic2universalenergy.field.forge_energy_per_eu", this.draft.forgeEnergyPerEu, 250);
     }
 
     private void addBuildCraftToIc2Widgets()
@@ -268,7 +270,9 @@ public final class BridgeConfigScreen extends Screen
 
     private EditBox addInput(String key, String labelKey, Object value, int y)
     {
-        EditBox input = new EditBox(this.font, this.inputX(), y, this.inputWidth(), 20, Component.translatable(labelKey));
+        boolean wide = this.page == Page.OVERRIDES;
+        EditBox input = new EditBox(this.font, wide ? this.controlX() : this.inputX(), y,
+                wide ? this.controlWidth() : this.inputWidth(), 20, Component.translatable(labelKey));
         input.setMaxLength(2048);
         input.setValue(String.valueOf(value));
         input.setEditable(this.canSave);
@@ -281,12 +285,12 @@ public final class BridgeConfigScreen extends Screen
 
     private int inputX()
     {
-        return this.panelRight() - PANEL_PADDING - INPUT_COLUMN_WIDTH;
+        return this.panelRight() - PANEL_PADDING - this.inputWidth();
     }
 
     private int inputWidth()
     {
-        return INPUT_COLUMN_WIDTH;
+        return Math.min(INPUT_COLUMN_WIDTH, this.controlWidth() / 2);
     }
 
     private void switchPage(Page nextPage)
@@ -349,6 +353,7 @@ public final class BridgeConfigScreen extends Screen
         if (this.applyDraft())
         {
             this.status = Component.translatable("screen.ic2universalenergy.saved").getString();
+            this.saved = true;
         }
     }
 
@@ -363,6 +368,7 @@ public final class BridgeConfigScreen extends Screen
 
     private boolean applyDraft()
     {
+        this.saved = false;
         if (!this.canSave)
         {
             this.status = Component.translatable("screen.ic2universalenergy.readonly_status").getString();
@@ -509,6 +515,16 @@ public final class BridgeConfigScreen extends Screen
         this.renderPageLabels(graphics);
         if (this.page != Page.PROFILES)
         {
+            for (EditBox input : this.inputs.values())
+            {
+                boolean wide = this.page == Page.OVERRIDES;
+                graphics.drawWordWrap(this.font, input.getMessage(), this.labelX(),
+                        wide ? input.getY() - 12 : input.getY() + 4,
+                        wide ? this.controlWidth() : this.inputX() - this.labelX() - 12, 0xE0E0E0);
+            }
+        }
+        if (this.page != Page.PROFILES)
+        {
             graphics.drawCenteredString(
                     this.font,
                     this.canSave
@@ -520,7 +536,7 @@ public final class BridgeConfigScreen extends Screen
             );
             if (!this.status.isEmpty())
             {
-                graphics.drawCenteredString(this.font, this.status, this.width / 2, this.height - 42, 0xFF8080);
+                graphics.drawCenteredString(this.font, this.status, this.width / 2, this.height - 42, this.statusColor());
             }
         }
         super.render(graphics, mouseX, mouseY, partialTick);
@@ -532,9 +548,6 @@ public final class BridgeConfigScreen extends Screen
         {
             case ENERGY -> {
                 this.centeredNote(graphics, "screen.ic2universalenergy.note.energy", 70);
-                this.label(graphics, "screen.ic2universalenergy.field.eu_per_mj", 184);
-                this.label(graphics, "screen.ic2universalenergy.field.transfer_limit", 240);
-                this.label(graphics, "screen.ic2universalenergy.field.forge_energy_per_eu", 324);
             }
             case BC_TO_IC2 -> {
                 this.centeredNote(graphics, "screen.ic2universalenergy.note.bc_to_ic2", 70);
@@ -542,19 +555,13 @@ public final class BridgeConfigScreen extends Screen
             }
             case BALANCE -> {
                 this.centeredNote(graphics, "screen.ic2universalenergy.note.balance", 70);
-                this.label(graphics, "screen.ic2universalenergy.field.fuel_multiplier", 100);
-                this.label(graphics, "screen.ic2universalenergy.field.reference_volume", 128);
-                this.label(graphics, "screen.ic2universalenergy.field.oil_energy", 156);
-                this.label(graphics, "screen.ic2universalenergy.field.oil_cycle", 184);
-                this.label(graphics, "screen.ic2universalenergy.field.fuel_energy", 212);
-                this.label(graphics, "screen.ic2universalenergy.field.fuel_cycle", 240);
             }
             case PROFILES -> {
                 String message = this.status.isEmpty()
                         ? Component.translatable("screen.ic2universalenergy.note.profile").getString()
                         : this.status;
                 graphics.drawCenteredString(this.font, message, this.width / 2, 70,
-                        this.status.isEmpty() ? 0xE0E0E0 : 0xFF8080);
+                        this.status.isEmpty() ? 0xE0E0E0 : this.statusColor());
                 int activeX = this.panelLeft() + 278;
                 int modeX = activeX + 58;
                 int manualX = modeX + 84;
@@ -571,18 +578,13 @@ public final class BridgeConfigScreen extends Screen
             }
             case IC2_TO_BC -> {
                 this.centeredNote(graphics, "screen.ic2universalenergy.note.ic2_to_bc", 70);
-                this.label(graphics, "screen.ic2universalenergy.field.namespace_tokens", 156);
-                this.label(graphics, "screen.ic2universalenergy.field.burn_time", 184);
             }
             case DISCOVERY -> {
                 this.centeredNote(graphics, "screen.ic2universalenergy.note.discovery", 70);
-                this.label(graphics, "screen.ic2universalenergy.field.namespace_tokens", 128);
             }
             case OVERRIDES -> {
                 this.centeredNote(graphics, "screen.ic2universalenergy.note.bc_rule", 70);
-                this.label(graphics, "screen.ic2universalenergy.field.bc_to_ic2_rules", 106);
                 this.centeredNote(graphics, "screen.ic2universalenergy.note.ic2_rule", 142);
-                this.label(graphics, "screen.ic2universalenergy.field.ic2_to_bc_rules", 158);
             }
             case COMPATIBILITY -> {
                 this.renderCompatibility(graphics);
@@ -641,6 +643,11 @@ public final class BridgeConfigScreen extends Screen
         graphics.drawCenteredString(this.font, Component.translatable(translationKey), this.width / 2, y, 0xC8D3E0);
     }
 
+    private int statusColor()
+    {
+        return this.saved ? 0x80FF80 : 0xFF8080;
+    }
+
     private int panelWidth()
     {
         return Math.min(PANEL_MAX_WIDTH, this.width - 32);
@@ -662,7 +669,7 @@ public final class BridgeConfigScreen extends Screen
         {
             case PROFILES -> 320;
             case BALANCE -> 270;
-            case ENERGY -> 354;
+            case ENERGY -> 282;
             case IC2_TO_BC, DISCOVERY -> 218;
             case OVERRIDES -> 210;
             case BC_TO_IC2 -> 202;
@@ -688,6 +695,16 @@ public final class BridgeConfigScreen extends Screen
     private Component enumLabel(Enum<?> value)
     {
         return Component.translatable("screen.ic2universalenergy.enum." + value.name().toLowerCase());
+    }
+
+    @Override
+    public void resize(Minecraft minecraft, int width, int height)
+    {
+        if (this.draft != null && !this.inputs.isEmpty())
+        {
+            this.storeCurrentPageValues();
+        }
+        super.resize(minecraft, width, height);
     }
 
     @Override

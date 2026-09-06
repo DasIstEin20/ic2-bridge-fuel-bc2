@@ -25,6 +25,14 @@ public class OptionalBridgeIntegrationTest {
     private static final Logger LOGGER = LoggerFactory.getLogger("OptionalBridgeIntegrationTest");
     private static final BlockPos MACHINE = new BlockPos(5, 3, 3);
 
+    @GameTest(setupTicks = 10, template = BridgeTestSupport.TEMPLATE, batch = "fe_persistence")
+    public static void forestryEnergyChangesMarkReceiverChunk(GameTestHelper helper) {
+        BridgeTestSupport.clearTemplate(helper);
+        BridgeTestSupport.place(helper, MACHINE, "forestry:carpenter");
+        helper.startSequence().thenIdle(5)
+              .thenExecute(() -> ForgeEnergyPersistenceTest.assertReceiverPersistence(helper, MACHINE)).thenSucceed();
+    }
+
     @GameTest(setupTicks = 10, template = BridgeTestSupport.TEMPLATE, batch = "fuel_registry")
     public static void allBuildCraftFuelProfilesMatchLiveFuelRegistry(GameTestHelper helper) throws ReflectiveOperationException {
         Object manager = Class.forName("buildcraft.api.fuels.BuildcraftFuelRegistry").getField("fuel").get(null);

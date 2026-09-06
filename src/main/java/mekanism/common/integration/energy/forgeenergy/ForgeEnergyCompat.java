@@ -10,6 +10,7 @@ import mekanism.common.integration.energy.IEnergyCompat;
 import mekanism.common.util.CapabilityUtils;
 import mekanism.common.util.UnitDisplayUtils.EnergyUnit;
 import net.minecraft.core.Direction;
+import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.capabilities.ForgeCapabilities;
 import net.minecraftforge.common.capabilities.ICapabilityProvider;
@@ -42,6 +43,7 @@ public class ForgeEnergyCompat implements IEnergyCompat {
 
     @Override
     public LazyOptional<IStrictEnergyHandler> getLazyStrictEnergyHandler(ICapabilityProvider provider, @Nullable Direction side) {
-        return CapabilityUtils.getCapability(provider, getCapability(), side).lazyMap(ForgeStrictEnergyHandler::new);
+        return CapabilityUtils.getCapability(provider, getCapability(), side).lazyMap(storage ->
+              new ForgeStrictEnergyHandler(storage, provider instanceof BlockEntity tile ? tile : null));
     }
 }
